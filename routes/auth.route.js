@@ -8,7 +8,10 @@ const {
 
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
-const { loginSchema, registerSchema } = require("../shema-validators/auth.validators");
+const {
+    loginSchema,
+    registerSchema,
+} = require("../shema-validators/auth.validators");
 
 router.get("/me", auth, getUserDetails);
 router.post("/login", schemaValidator(loginSchema, "body"), loginController);
