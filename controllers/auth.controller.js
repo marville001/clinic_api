@@ -5,7 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 module.exports = {
 	getUserDetails: catchAsync(async (req, res) => {
         const { email } = req.user;
-        const user = await User.findOne({ email }).select("+password"); // select expiclity password
+        const user = await User.findOne({ email }).select("-password"); // select expiclity password
 
         res.status(200).json({
             success: true,
