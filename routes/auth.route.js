@@ -2,23 +2,14 @@ const router = require("express").Router();
 
 const {
     loginController,
-    registerController,
-    getUserDetails,
+    getUserDetailsController,
 } = require("../controllers/auth.controller");
 
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
-const {
-    loginSchema,
-    registerSchema,
-} = require("../shema-validators/auth.validators");
+const { loginSchema } = require("../shema-validators/auth.validators");
 
-router.get("/me", auth, getUserDetails);
+router.get("/me", auth, getUserDetailsController);
 router.post("/login", schemaValidator(loginSchema, "body"), loginController);
-router.post(
-    "/register",
-    schemaValidator(registerSchema, "body"),
-    registerController
-);
 
 module.exports = router;

@@ -8,7 +8,8 @@ const xss = require("xss-clean");
 
 // Routes
 const authRoutes = require("./routes/auth.route");
-const doctorRoutes = require("./routes/doctor.route");
+const doctorsRoutes = require("./routes/doctor.route");
+const adminsRoutes = require("./routes/admins.route");
 
 const app = express();
 
@@ -43,7 +44,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/doctor", doctorRoutes);
+app.use("/api/doctors", doctorsRoutes);
+app.use("/api/admins", adminsRoutes);
 
 
 // handling all (get,post,update,delete.....) unhandled routes
