@@ -31,7 +31,7 @@ const limiter = rateLimit({
   message: " Too many req from this IP , please Try  again in an Hour ! ",
 });
 
-app.use("/api/v1", limiter);
+app.use("/api", limiter);
 
 // Data sanitization against NoSql query injection
 app.use(mongoSanitize()); //   filter out the dollar signs protect from  query injection attact
