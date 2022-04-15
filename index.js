@@ -6,6 +6,12 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 
+// Swagger
+const swaggerUi = require("swagger-ui-express");
+const YAML = require('yamljs');
+
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 // Routes
 const authRoutes = require("./routes/auth.route");
 const doctorsRoutes = require("./routes/doctor.route");
@@ -42,7 +48,14 @@ app.use(xss()); //    protect from molision code coming from html
 app.get("/", (req, res) => {
   res.send("App running....");
 });
+app.get("/api", (req, res) => {
+  res.send("App running....");
+});
 
+// API Docs endpoint
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/admins", adminsRoutes);
