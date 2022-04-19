@@ -29,11 +29,6 @@ const adminSchema = new mongoose.Schema({
         type: String,
         default: "admin",
     },
-    password: {
-        type: String,
-        required: true,
-        select: false,
-    },
     createdAt: {
         type: String,
         default: Date.now(),
