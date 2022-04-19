@@ -10,8 +10,8 @@ const {
     addDoctorSc
 } = require("../shema-validators/doctor.validators");
 
-router.get("/", getAllDoctorsController);
-router.post("/", schemaValidator(addDoctorSc, "body"), addDoctorController);
+router.get("/", auth, getAllDoctorsController);
+router.post("/", auth, schemaValidator(addDoctorSc, "body"), addDoctorController);
 
 
 module.exports = router;

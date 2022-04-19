@@ -56,15 +56,34 @@ module.exports = {
         });
     }),
     getAdminController: catchAsync(async (req, res) => {
-        res.send("Get Admin");
+        const { id } = req.params;
+        const admin = await Admin.findById(id);
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            admin,
+        });
     }),
     getAdminsController: catchAsync(async (req, res) => {
-        res.send("Get Admins");
+        const admins = await Admin.find().select("-password");
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            admins,
+        });
     }),
     updateAdminController: catchAsync(async (req, res) => {
         res.send("Update Admin");
     }),
     deleteAdminController: catchAsync(async (req, res) => {
-        res.send("Update Admin");
+        const { id } = req.params;
+        await Admin.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: `Deleted Successfull.`,
+        });
     }),
 };
