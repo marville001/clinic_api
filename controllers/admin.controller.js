@@ -1,6 +1,7 @@
 const Login = require("../models/login.model");
 const catchAsync = require("../utils/catchAsync");
 const bcrypt = require("bcrypt");
+const _ = require("lodash");
 const Admin = require("../models/admin.model");
 const signToken = require("../utils/signToken");
 
@@ -13,6 +14,13 @@ module.exports = {
             return res
                 .status(400)
                 .send({ success: false, message: "email already registered" });
+
+        user = await Login.findOne({ username });
+        if (user)
+            return res.status(400).send({
+                success: false,
+                message: "username already registered. Try another username",
+            });
 
         user = await Login.create({
             username,
@@ -33,11 +41,9 @@ module.exports = {
         });
         user.save({ validateBeforeSave: false });
 
-        const token = await signToken({ _id: user._id, role: "admin", email });
-
         res.status(200).json({
             success: true,
-            message: `Registration successfull.`,
+            message: `Admin added successfull.`,
             user: _.pick(user, [
                 "_id",
                 "firstname",
@@ -47,7 +53,6 @@ module.exports = {
                 "role",
                 "createdAt",
             ]),
-            token,
         });
     }),
     getAdminController: catchAsync(async (req, res) => {
