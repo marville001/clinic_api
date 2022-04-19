@@ -8,7 +8,7 @@ const { updateAdminSchema, createAdminSchema } = require("../shema-validators/ad
 
 router.get("/", auth, getAdminsController);
 router.get("/:id", auth, getAdminController);
-router.post("/",  schemaValidator(createAdminSchema, "body"), createAdminController);
+router.post("/", auth,  schemaValidator(createAdminSchema, "body"), createAdminController);
 router.put("/:id", auth,  schemaValidator(updateAdminSchema, "body"), updateAdminController);
 router.delete("/:id", auth, deleteAdminController);
 
