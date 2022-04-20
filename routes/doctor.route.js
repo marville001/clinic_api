@@ -5,6 +5,7 @@ const {
   addDoctorController,
   getAllDoctorsController,
   getDoctorController,
+  updateDoctorController,
 } = require("../controllers/doctor.controller");
 
 const auth = require("../middlewares/auth");
@@ -13,6 +14,7 @@ const { addDoctorSc } = require("../shema-validators/doctor.validators");
 
 router.get("/", getAllDoctorsController);
 router.post("/", schemaValidator(addDoctorSc, "body"), addDoctorController);
-router.get("/doctor/:id", getDoctorController);
+router.get("/:id", getDoctorController);
+router.put("/update", updateDoctorController);
 
 module.exports = router;

@@ -38,4 +38,34 @@ module.exports = {
       doctor,
     });
   }),
+  updateDoctorController: catchAsync(async (req, res) => {
+    let {
+      id,
+      firstname,
+      lastname,
+      email,
+      username,
+      gender,
+      department,
+      phone,
+      dob,
+      bio,
+    } = req.body;
+    const query = await Doctor.where({ _id: id }).updateMany({
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      username: username,
+      gender: gender,
+      department: department,
+      phone: phone,
+      dob: dob,
+      bio: bio,
+    });
+    res.status(200).json({
+      success: true,
+      message: `Successfull.`,
+      query,
+    });
+  }),
 };
