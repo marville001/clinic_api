@@ -68,4 +68,9 @@ module.exports = {
       query,
     });
   }),
+  deleteDoctorController: catchAsync(async (req, res) => {
+    let { id } = req.body;
+    const query = await Doctor.where({ _id: id }).deleteOne();
+    res.status(200).json({ succcess: true, message: "successful", query });
+  }),
 };
