@@ -50,6 +50,10 @@ const doctorSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  role: {
+    type: "string",
+    default: "doctor",
+  },
   createdAt: {
     type: String,
     default: Date.now(),

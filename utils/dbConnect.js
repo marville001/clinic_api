@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 const { DB_URL } = require('../config');
 
-
-
-console.log(`DB_URL`, DB_URL);
-
 module.exports = () => {
   console.log('connecting to DB...');
   mongoose

@@ -1,96 +1,72 @@
-const bcrypt = require("bcrypt");
-const _ = require("lodash");
 const catchAsync = require("../utils/catchAsync");
+const Login = require("../models/login.model");
+const signToken = require("../utils/signToken");
+const Admin = require("../models/admin.model");
+const Doctor = require("../models/doctor.model");
+const bcrypt = require("bcrypt");
 
 module.exports = {
-	getUserDetails: catchAsync(async (req, res) => {
-        const { email } = req.user;
-        const user = await User.findOne({ email }).select("-password"); // select expiclity password
+    getUserDetailsController: catchAsync(async (req, res) => {
+        const { role, _id } = req.user;
+        let userDetails;
+
+        if (role === "admin") {
+            userDetails = await Admin.findById(_id);
+        } else if (role === "doctor") {
+            userDetails = await Doctor.findById(_id);
+        } else {
+            userDetails: null;
+        }
+
+        const token = await signToken({ _id, role });
 
         res.status(200).json({
             success: true,
             message: `Login Successfull.`,
-            user: _.pick(user, [
-                "_id",
-                "firstname",
-                "lastname",
-                "username",
-                "email",
-            ]),
-            token: user.generateAuthToken(),
+            user: userDetails,
+            token,
         });
-	}),
-	loginController: catchAsync(async (req, res) => {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email }).select("+password"); // select expiclity password
-
+    }),
+    loginController: catchAsync(async (req, res) => {
+        const { email_username, password } = req.body;
+        // Check if user email or username exists
+        let user = await Login.findOne({
+            $or: [{ email: email_username }, { username: email_username }],
+        }).select("+password");
         if (!user)
             return res
                 .status(400)
-                .send({ success: false, message: "invalid email or password" });
+                .send({ success: false, message: "Invalid email or password" });
 
-        let validPassword = await user.correctPassword(password, user.password);
-        if (!validPassword)
+        let valid = await bcrypt.compare(password, user.password);
+        if (!valid)
             return res.status(400).send({
                 success: false,
                 message: "Invalid email or password...",
             });
 
+        const { role } = user;
+        let userDetails;
+
+        if (role === "admin") {
+            userDetails = await Admin.findOne({
+                $or: [{ email: email_username }, { username: email_username }],
+            });
+        } else if (role === "doctor") {
+            userDetails = await Doctor.findOne({
+                $or: [{ email: email_username }, { username: email_username }],
+            });
+        } else {
+            userDetails: null;
+        }
+
+        const token = await signToken({ _id: userDetails._id, role });
+
         res.status(200).json({
             success: true,
             message: `Login Successfull.`,
-            user: _.pick(user, [
-                "_id",
-                "firstname",
-                "lastname",
-                "username",
-                "email",
-            ]),
-            token: user.generateAuthToken(),
-        });
-	}),
-	registerController: catchAsync(async (req, res) => {
-        const { firstname, lastname, email, username, password } =
-            req.body;
-
-        // Check if user email or username exists
-        let user = await User.findOne({ email });
-        if (user)
-            return res
-                .status(400)
-                .send({ success: false, message: "email already registered" });
-
-        user = await User.findOne({ username });
-        if (user)
-            return res
-                .status(400)
-                .send({ success: false, message: "username taken" });
-
-        user = await User.create({
-            firstname,
-            lastname,
-            email,
-            username,
-            password,
-        });
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
-
-        user.save({ validateBeforeSave: false });
-
-        res.status(200).json({
-            success: true,
-            message: `Registration successfull.`,
-            user: _.pick(user, [
-                "_id",
-                "firstname",
-                "lastname",
-                "username",
-                "email",
-            ]),
-            token: user.generateAuthToken(),
+            user: userDetails,
+            token,
         });
     }),
-}
+};

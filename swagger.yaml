@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+    title: Clinic App
+    description: Clinic management system
+    version: 1.0.0
+    license:
+        - url: https://opensource.org/licenses/MIT
+servers:
+    - url: "http://localhost:9003/api"
+      description: Local Development server
+tags:
+    - name: common
+      description: common API
+    - name: admins
+      description: Admins API
+    - name: doctors
+      description: Doctors API
+    - name: patients
+      description: Patients API
+    - name: doctors
+      description: Doctors API
+schemes: [https, http]
+paths:
+    /:
+        get:
+            summary: Check server up/down status
+            operationId: rootpoint
+            tags:
+                - common
+            responses:
+                "200":
+                    description: OK
+                "500":
+                    description: Server Error
+
+    /admins:
+        get:
+            summary: Get all admins
+            operationId: config
+            tags:
+                - admins
+            security:
+                - ApiKeyAuth: []
+            responses:
+                "200":
+                    description: OK
+                "401":
+                    description: Access denied - no auth token provided
+                "500":
+                    description: Server Error
