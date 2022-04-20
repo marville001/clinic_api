@@ -1,17 +1,20 @@
 const router = require("express").Router();
 
+const doctorController = require("../controllers/doctor.controller");
 const {
-    addDoctorController, getAllDoctorsController
+  addDoctorController,
+  getAllDoctorsController,
+  getDoctorController,
+  updateDoctorController,
 } = require("../controllers/doctor.controller");
 
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
-const {
-    addDoctorSc
-} = require("../shema-validators/doctor.validators");
+const { addDoctorSc } = require("../shema-validators/doctor.validators");
 
-router.get("/", auth, getAllDoctorsController);
-router.post("/", auth, schemaValidator(addDoctorSc, "body"), addDoctorController);
-
+router.get("/", getAllDoctorsController);
+router.post("/", schemaValidator(addDoctorSc, "body"), addDoctorController);
+router.get("/:id", getDoctorController);
+router.put("/update", updateDoctorController);
 
 module.exports = router;
