@@ -92,7 +92,30 @@ module.exports = {
         });
     }),
     updateSecretaryController: catchAsync(async (req, res) => {
-        res.send("Update Secretary");
+        const { id } = req.params;
+        let secretary = await Secretary.findById(id);
+
+        if (!secretary)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid Secretary Id" });
+
+        secretary = await Secretary.findByIdAndUpdate(
+            id,
+            {
+                $set: req.body,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            secretary,
+        });
     }),
     deleteSecretaryController: catchAsync(async (req, res) => {
         const { id } = req.params;

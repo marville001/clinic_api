@@ -74,7 +74,30 @@ module.exports = {
         });
     }),
     updateAdminController: catchAsync(async (req, res) => {
-        res.send("Update Admin");
+        const { id } = req.params;
+        let admin = await Admin.findById(id);
+
+        if (!admin)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid Admin Id" });
+
+        admin = await Admin.findByIdAndUpdate(
+            id,
+            {
+                $set: req.body,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            admin,
+        });
     }),
     deleteAdminController: catchAsync(async (req, res) => {
         const { id } = req.params;
