@@ -14,6 +14,7 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 const authRoutes = require("./routes/auth.route");
 const doctorsRoutes = require("./routes/doctor.route");
 const adminsRoutes = require("./routes/admins.route");
+const secretariesRoutes = require("./routes/secretaries.route");
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/admins", adminsRoutes);
+app.use("/api/secretaries", secretariesRoutes);
 
 // handling all (get,post,update,delete.....) unhandled routes
 app.all("*", (req, res, next) => {

@@ -2,11 +2,21 @@ const Login = require("../models/login.model");
 const catchAsync = require("../utils/catchAsync");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
-const Admin = require("../models/admin.model");
+const Secretary = require("../models/secretary.model");
 
 module.exports = {
-    createAdminController: catchAsync(async (req, res) => {
-        const { firstname, lastname, username, email, password } = req.body;
+    createSecretaryController: catchAsync(async (req, res) => {
+        const {
+            firstname,
+            lastname,
+            dob,
+            gender,
+            phone,
+            address,
+            username,
+            email,
+            password,
+        } = req.body;
         // Check if user email or username exists
         let user = await Login.findOne({ email });
         if (user)
@@ -25,24 +35,28 @@ module.exports = {
             username,
             email,
             password,
-            role: "admin",
+            role: "secretary",
         });
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
 
         user.save({ validateBeforeSave: false });
 
-        user = await Admin.create({
+        user = await Secretary.create({
             firstname,
             lastname,
             username,
             email,
+            dob,
+            gender,
+            phone,
+            address,
         });
         user.save({ validateBeforeSave: false });
 
         res.status(200).json({
             success: true,
-            message: `Admin added successfull.`,
+            message: `Secretary added successfull.`,
             user: _.pick(user, [
                 "_id",
                 "firstname",
@@ -50,43 +64,47 @@ module.exports = {
                 "email",
                 "username",
                 "role",
+                "dob",
+                "phone",
+                "gender",
+                "address",
                 "createdAt",
             ]),
         });
     }),
-    getAdminController: catchAsync(async (req, res) => {
+    getSecretaryController: catchAsync(async (req, res) => {
         const { id } = req.params;
-        const admin = await Admin.findById(id);
+        const secretary = await Secretary.findById(id);
 
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            admin,
+            secretary,
         });
     }),
-    getAdminsController: catchAsync(async (req, res) => {
-        const admins = await Admin.find().select("-password");
+    getSecretariesController: catchAsync(async (req, res) => {
+        const secretaries = await Secretary.find().select("-password");
 
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            admins,
+            secretaries,
         });
     }),
-    updateAdminController: catchAsync(async (req, res) => {
-        res.send("Update Admin");
+    updateSecretaryController: catchAsync(async (req, res) => {
+        res.send("Update Secretary");
     }),
-    deleteAdminController: catchAsync(async (req, res) => {
+    deleteSecretaryController: catchAsync(async (req, res) => {
         const { id } = req.params;
 
-        const admin = await Admin.findById(id);
-        if (!admin)
+        const secretary = await Secretary.findById(id);
+        if (!secretary)
             return res
                 .status(404)
                 .send({ success: false, message: "Account does not exist" });
 
-        await Admin.findByIdAndDelete(id);
-        await Login.where({ email: admin.email }).deleteOne();
+        await Secretary.findByIdAndDelete(id);
+        await Login.where({ email: secretary.email }).deleteOne();
 
         res.status(200).json({
             success: true,
