@@ -16,7 +16,7 @@ module.exports = {
                 });
                 return errors;
             }),
-        password: Joi.string().min(8).required(),
+        password: Joi.string().required(),
     }),
     registerSchema: Joi.object().keys({
         firstname: Joi.string().min(3).max(20).required(),
