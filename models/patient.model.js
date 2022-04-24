@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const doctorSchema = new mongoose.Schema({
+const patientSchema = new mongoose.Schema({
     firstname: {
         type: String,
         required: true,
@@ -11,48 +11,44 @@ const doctorSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    phone: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
-        required: true,
-        unique: true,
         trim: true,
         lowercase: true,
+        default: "",
     },
-    username: {
+
+    dob: {
         type: String,
+        default: "",
+    },
+    type: {
+        type: String,
+        enum: ["active"],
         required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
     },
     gender: {
         type: String,
-        enum: ["male", "female", "other"],
         required: true,
+        enum: ["male", "female", "other"],
     },
     department: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Department",
         required: true,
     },
-    phone: {
+    address: {
         type: String,
         required: true,
-        trim: true,
     },
-    dob: {
-        type: String,
+    diagnosis: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Diagnosis",
         required: true,
-        trim: true,
-    },
-    bio: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    role: {
-        type: "string",
-        default: "doctor",
     },
     createdAt: {
         type: String,
@@ -60,5 +56,5 @@ const doctorSchema = new mongoose.Schema({
     },
 });
 
-const Doctor = mongoose.model("Doctor", doctorSchema);
-module.exports = Doctor;
+const Patient = mongoose.model("Patient", patientSchema);
+module.exports = Patient;

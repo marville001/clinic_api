@@ -17,6 +17,7 @@ const adminsRoutes = require("./routes/admins.route");
 const secretariesRoutes = require("./routes/secretaries.route");
 const departmentsRoutes = require("./routes/departments.route");
 const diagnosisRoutes = require("./routes/diagnosis.route");
+const patientsRoutes = require("./routes/patients.route");
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use("/api/admins", adminsRoutes);
 app.use("/api/secretaries", secretariesRoutes);
 app.use("/api/departments", departmentsRoutes);
 app.use("/api/diagnosis", diagnosisRoutes);
+app.use("/api/patients", patientsRoutes);
 
 // handling all (get,post,update,delete.....) unhandled routes
 app.all("*", (req, res, next) => {
