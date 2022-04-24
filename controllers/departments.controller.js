@@ -2,7 +2,7 @@ const catchAsync = require("../utils/catchAsync");
 const Department = require("../models/department.model");
 
 module.exports = {
-    createADepartmentController: catchAsync(async (req, res) => {
+    createDepartmentController: catchAsync(async (req, res) => {
         const { name, description } = req.body;
 
         let department = await Department.findOne({ name });
