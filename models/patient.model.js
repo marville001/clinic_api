@@ -28,7 +28,7 @@ const patientSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["active"],
+        enum: ["active", "inactive", "not-subscribed"],
         required: true,
     },
     gender: {
