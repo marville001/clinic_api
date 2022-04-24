@@ -1,7 +1,4 @@
-const Login = require("../models/login.model");
 const catchAsync = require("../utils/catchAsync");
-const bcrypt = require("bcrypt");
-const _ = require("lodash");
 const Patient = require("../models/patient.model");
 
 module.exports = {
