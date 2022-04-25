@@ -33,7 +33,7 @@ module.exports = {
   }),
   getDoctorController: catchAsync(async (req, res) => {
     let { id } = req.params;
-    const doctor = await Doctor.findById(id);
+    const doctor = await Doctor.findById(id).populate("department");
     res.status(200).json({
       success: true,
       message: `Successfull.`,
