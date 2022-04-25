@@ -1,5 +1,6 @@
 const Doctor = require("../models/doctor.model");
 const catchAsync = require("../utils/catchAsync");
+const Login = require("../models/login.model");
 
 module.exports = {
   addDoctorController: catchAsync(async (req, res) => {
@@ -30,7 +31,7 @@ module.exports = {
   }),
   getDoctorController: catchAsync(async (req, res) => {
     let { id } = req.params;
-    const doctor = await Doctor.where({ _id: id });
+    const doctor = await Doctor.findById(id);
     res.status(200).json({
       success: true,
       message: `Successfull.`,
@@ -38,8 +39,15 @@ module.exports = {
     });
   }),
   updateDoctorController: catchAsync(async (req, res) => {
+    let { id } = req.params;
+    let doctor = await Doctor.findById(id);
+
+    if (!doctor)
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid doctor Id" });
+
     let {
-      id,
       firstname,
       lastname,
       email,
@@ -67,9 +75,20 @@ module.exports = {
       query,
     });
   }),
+
   deleteDoctorController: catchAsync(async (req, res) => {
-    let { id } = req.body;
-    const query = await Doctor.where({ _id: id }).deleteOne();
-    res.status(200).json({ succcess: true, message: "successful", query });
+    let { id } = req.params;
+
+    let doctor = await Doctor.findById(id);
+
+    if (!doctor)
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid doctor Id" });
+
+    await Doctor.findByIdAndDelete(id);
+
+    await Login.where({ email: doctor.email }).deleteOne();
+    res.status(200).json({ succcess: true, message: "successful" });
   }),
 };
