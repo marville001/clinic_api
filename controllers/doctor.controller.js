@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const Doctor = require("../models/doctor.model");
 const catchAsync = require("../utils/catchAsync");
 const Login = require("../models/login.model");
