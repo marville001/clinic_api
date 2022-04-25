@@ -1,19 +1,31 @@
 const Doctor = require("../models/doctor.model");
 const catchAsync = require("../utils/catchAsync");
 const Login = require("../models/login.model");
+const bcrypt = require("bcrypt");
 
 module.exports = {
   addDoctorController: catchAsync(async (req, res) => {
-    console.log("joan");
     const { email, username } = req.body;
-    console.log(req.body);
+    const { password, ...details } = req.body;
     let doctor = await Doctor.findOne({ email });
     if (doctor) res.status(400).send({ error: "Email already added" });
 
     doctor = await Doctor.findOne({ username });
     if (doctor) res.status(400).send({ error: "Username already added" });
 
-    doctor = await Doctor.create(req.body);
+    doctor = await Login.create({
+      username,
+      email,
+      password,
+      role: "doctor",
+    });
+    const salt = await bcrypt.genSalt(10);
+
+    doctor.password = await bcrypt.hash(doctor.password, salt);
+
+    doctor.save({ validateBeforeSave: false });
+
+    doctor = await Doctor.create(details);
 
     await doctor.save({ validateBeforeSave: true });
 
@@ -59,6 +71,7 @@ module.exports = {
       phone,
       dob,
       bio,
+      address,
     } = req.body;
     const query = await Doctor.where({ _id: id }).updateMany({
       firstname: firstname,
@@ -70,6 +83,7 @@ module.exports = {
       phone: phone,
       dob: dob,
       bio: bio,
+      address,
     });
     res.status(200).json({
       success: true,

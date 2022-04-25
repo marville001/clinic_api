@@ -10,6 +10,7 @@ module.exports = {
     gender: Joi.string().required(),
     department: Joi.string().required(),
     phone: Joi.string().required(),
+    address: Joi.string().required(),
     dob: Joi.date().required(),
     bio: Joi.string().required(),
   }),
