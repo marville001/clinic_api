@@ -16,7 +16,7 @@ const { addDoctorSc } = require("../shema-validators/doctor.validators");
 router.get("/", getAllDoctorsController);
 router.post("/", schemaValidator(addDoctorSc, "body"), addDoctorController);
 router.get("/:id", getDoctorController);
-router.put("/update", updateDoctorController);
-router.delete("/delete", deleteDoctorController);
+router.put("/:id", updateDoctorController);
+router.delete("/:id", deleteDoctorController);
 
 module.exports = router;
