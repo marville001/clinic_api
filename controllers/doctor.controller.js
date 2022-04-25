@@ -4,7 +4,9 @@ const Login = require("../models/login.model");
 
 module.exports = {
   addDoctorController: catchAsync(async (req, res) => {
+    console.log("joan");
     const { email, username } = req.body;
+    console.log(req.body);
     let doctor = await Doctor.findOne({ email });
     if (doctor) res.status(400).send({ error: "Email already added" });
 
