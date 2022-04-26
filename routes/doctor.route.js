@@ -13,10 +13,15 @@ const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
 const { addDoctorSc } = require("../shema-validators/doctor.validators");
 
-router.get("/", getAllDoctorsController);
-router.post("/", schemaValidator(addDoctorSc, "body"), addDoctorController);
-router.get("/:id", getDoctorController);
-router.put("/:id", updateDoctorController);
-router.delete("/:id", deleteDoctorController);
+router.get("/", auth, getAllDoctorsController);
+router.post(
+  "/",
+  auth,
+  schemaValidator(addDoctorSc, "body"),
+  addDoctorController
+);
+router.get("/:id", auth, getDoctorController);
+router.put("/:id", auth, updateDoctorController);
+router.delete("/:id", auth, deleteDoctorController);
 
 module.exports = router;
