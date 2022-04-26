@@ -27,7 +27,7 @@ module.exports = {
     }),
 
     getDiagnosisController: catchAsync(async (req, res) => {
-        const diagnosis = await Diagnosis.find();
+        const diagnosis = await Diagnosis.find().sort([["createdAt", -1]]);
 
         res.status(200).json({
             success: true,

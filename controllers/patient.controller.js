@@ -1,6 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const Patient = require("../models/patient.model");
 const Contact = require("../models/contact.model");
+const ContactType = require("../models/contact-type.model");
 
 module.exports = {
   createPatientController: catchAsync(async (req, res) => {
@@ -70,29 +71,43 @@ module.exports = {
 
     await Patient.findByIdAndDelete(id);
 
-    res.status(200).json({
-      success: true,
-      message: `Deleted Successfull.`,
-    });
-  }),
+        res.status(200).json({
+            success: true,
+            message: `Deleted Successfull.`,
+        });
+    }),
 
-  createContactController: catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const patient = await Patient.findById(id);
-    if (!patient)
-      return res
-        .status(404)
-        .send({ success: false, message: "Patient not found" });
+    createContactTypeController: catchAsync(async (req, res) => {
+        const { name, description } = req.body;
 
-    // await contact.save({ validateBeforeSave: false });
+        let contactType = await ContactType.findOne({ name });
+        if (contactType)
+            return res.status(400).send({
+                success: false,
+                message: "Contact Type with given name exists",
+            });
 
-    contact = await Contact.create(req.body);
-    // await contact.save({ validateBeforeSave: true });
+        contactType = await ContactType.create({
+            name,
+            description,
+        });
 
-    res.status(200).json({
-      success: true,
-      message: `Contact Added Successfull.`,
-      contact,
-    });
-  }),
+        contactType.save({ validateBeforeSave: false });
+
+        res.status(200).json({
+            success: true,
+            message: `Contact Type added successfull.`,
+            contactType,
+        });
+    }),
+
+    getContactTypesController: catchAsync(async (req, res) => {
+        const contactType = await ContactType.find().sort([["createdAt", -1]]);
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            contactType,
+        });
+    }),
 };
