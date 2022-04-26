@@ -5,8 +5,6 @@ const { JWT_SECRET } = require("../config");
 module.exports = function (req, res, next) {
     const bearerHeader = req.headers["authorization"];
 
-    console.log({ headers: req.headers, bearerHeader });
-
     if (typeof bearerHeader === "undefined")
         return res.status(401).send({
             success: false,
@@ -20,7 +18,6 @@ module.exports = function (req, res, next) {
 
         next();
     } catch (ex) {
-        console.log(ex);
         res.status(400).send({ success: false, message: "Invalid token" });
     }
 };
