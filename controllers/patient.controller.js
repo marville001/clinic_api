@@ -74,11 +74,52 @@ module.exports = {
 
     await Patient.findByIdAndDelete(id);
 
-        res.status(200).json({
-            success: true,
-            message: `Deleted Successfull.`,
-        });
-    }),
+    res.status(200).json({
+      success: true,
+      message: `Deleted Successfull.`,
+    });
+  }),
+
+  createContactTypeController: catchAsync(async (req, res) => {
+    const { name, description } = req.body;
+
+    let contactType = await ContactType.findOne({ name });
+
+    if (contactType)
+      return res.status(400).send({
+        success: false,
+
+        message: "Contact Type with given name exists",
+      });
+
+    contactType = await ContactType.create({
+      name,
+
+      description,
+    });
+
+    contactType.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      success: true,
+
+      message: `Contact Type added successfull.`,
+
+      contactType,
+    });
+  }),
+
+  getContactTypesController: catchAsync(async (req, res) => {
+    const contactType = await ContactType.find().sort([["createdAt", -1]]);
+
+    res.status(200).json({
+      success: true,
+
+      message: `Successfull.`,
+
+      contactType,
+    });
+  }),
 
   createContactController: catchAsync(async (req, res) => {
     const { id } = req.params;

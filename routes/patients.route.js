@@ -1,9 +1,10 @@
 const router = require("express").Router();
 
-const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController } = require("../controllers/patient.controller");
+const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController } = require("../controllers/patient.controller");
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
 const { createContactTypeSchema } = require("../shema-validators/contact-type.validators");
+const { createContactSchema } = require("../shema-validators/contact.validators");
 const { createPatientSchema, updatePatientSchema } = require("../shema-validators/patient.validators");
 
 
