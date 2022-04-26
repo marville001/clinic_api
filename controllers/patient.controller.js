@@ -17,8 +17,11 @@ module.exports = {
   getPatientController: catchAsync(async (req, res) => {
     const { id } = req.params;
     // const patient = await Patient.findById(id);
-    const patient = await Patient.findById(id).populate("department diagnosis");
+    const patient = await Patient.findById(id).populate(
+      "department diagnosis contact"
+    );
 
+    console.log(patient);
     res.status(200).json({
       success: true,
       message: `Successfull.`,
@@ -77,6 +80,7 @@ module.exports = {
         });
     }),
 
+<<<<<<< Updated upstream
     createContactTypeController: catchAsync(async (req, res) => {
         const { name, description } = req.body;
 
@@ -110,4 +114,42 @@ module.exports = {
             contactType,
         });
     }),
+=======
+  createContactController: catchAsync(async (req, res) => {
+    const { id } = req.params;
+    let patient = await Patient.findById(id);
+    if (!patient)
+      return res
+        .status(404)
+        .send({ success: false, message: "Patient not found" });
+
+    contact = await Contact.create(req.body);
+    patient = await Patient.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          contact: [...patient.contact, contact.id],
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json({
+      success: true,
+      message: `Contact Added Successfull.`,
+      contact,
+    });
+  }),
+
+  // getPatientContactController: catchAsync(async (req, res) => {
+  //   const { id } = req.params;
+  //   const patient = await Patient.findById(id);
+  //   if (!patient)
+  //     return res
+  //       .status(404)
+  //       .send({ success: false, message: "Patient not found" });
+  // }),
+>>>>>>> Stashed changes
 };

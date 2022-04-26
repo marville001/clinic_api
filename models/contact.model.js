@@ -19,11 +19,10 @@ const contactSchema = new mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    default: "",
   },
   availability: {
     type: String,
-    default: "",
+    required:true,
   },
 
   address: {

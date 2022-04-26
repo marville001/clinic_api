@@ -25,6 +25,7 @@ module.exports = {
         });
         return errors;
       }),
+    contact: Joi.array().required(),
   }),
 
   updatePatientSchema: Joi.object().keys({
@@ -38,5 +39,6 @@ module.exports = {
     department: Joi.string().allow(""),
     address: Joi.string().allow(""),
     diagnosis: Joi.array().allow(),
+    contact: Joi.array().allow(),
   }),
 };

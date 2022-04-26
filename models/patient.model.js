@@ -50,6 +50,11 @@ const patientSchema = new mongoose.Schema({
         ref: "Diagnosis",
         required: true,
     },
+    contact: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Contact",
+        required: true,
+    },
     createdAt: {
         type: String,
         default: Date.now(),
