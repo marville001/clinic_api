@@ -109,4 +109,21 @@ module.exports = {
             contactType,
         });
     }),
+
+    deleteContactTypeController: catchAsync(async (req, res) => {
+        const { id } = req.params;
+
+        const contactType = await ContactType.findById(id);
+        if (!contactType)
+            return res
+                .status(404)
+                .send({ success: false, message: "ContactType not found" });
+
+        await ContactType.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: `Deleted Successfull.`,
+        });
+    }),
 };
