@@ -6,7 +6,17 @@ const Admin = require("../models/admin.model");
 
 module.exports = {
     createAdminController: catchAsync(async (req, res) => {
-        const { firstname, lastname, username, email, password } = req.body;
+        const {
+            firstname,
+            lastname,
+            username,
+            email,
+            password,
+            gender,
+            phone,
+            address,
+            dob,
+        } = req.body;
         // Check if user email or username exists
         let user = await Login.findOne({ email });
         if (user)
@@ -37,6 +47,10 @@ module.exports = {
             lastname,
             username,
             email,
+            gender,
+            phone,
+            address,
+            dob,
         });
         user.save({ validateBeforeSave: false });
 
