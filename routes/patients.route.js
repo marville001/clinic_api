@@ -34,7 +34,7 @@ router.put(
 );
 router.delete("/:id", auth, deletePatientController);
 router.post(
-  "/addcontact/:id",
+  "/contact/:id",
   auth,
   schemaValidator(createContactSchema, "body"),
   createContactController
