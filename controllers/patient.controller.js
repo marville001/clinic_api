@@ -3,6 +3,9 @@ const Patient = require("../models/patient.model");
 const Contact = require("../models/contact.model");
 const ContactType = require("../models/contact-type.model");
 
+const crypto = require("crypto");
+const File = require("../models/files.model");
+
 module.exports = {
     createPatientController: catchAsync(async (req, res) => {
         const patient = await Patient.create(req.body);
@@ -18,10 +21,9 @@ module.exports = {
         const { id } = req.params;
         // const patient = await Patient.findById(id);
         const patient = await Patient.findById(id).populate(
-            "department diagnosis contact"
+            "department diagnosis contact files"
         );
 
-        console.log(patient);
         res.status(200).json({
             success: true,
             message: `Successfull.`,
@@ -142,13 +144,13 @@ module.exports = {
                 .status(404)
                 .send({ success: false, message: "Patient not found" });
 
-      const contact = await Contact.create(req.body);
-      
+        const contact = await Contact.create(req.body);
+
         patient = await Patient.findByIdAndUpdate(
             id,
             {
                 $set: {
-                    contact: [...patient.contact, contact.id],
+                    contact: [...patient.contact, contact._id],
                 },
             },
             {
@@ -160,6 +162,52 @@ module.exports = {
             success: true,
             message: `Contact Added Successfull.`,
             contact,
+        });
+    }),
+
+    addPatietFileController: catchAsync(async (req, res) => {
+        const { id } = req.params;
+        let patient = await Patient.findById(id);
+        if (!patient)
+            return res
+                .status(404)
+                .send({ success: false, message: "Patient not found" });
+
+        if (!req.files || !req.files.file)
+            return res
+                .status("400")
+                .send({ success: false, message: "No 'image' selected" });
+
+        const { file } = req.files;
+
+        const fileId = crypto.randomBytes(8).toString("hex");
+        const imageLink = `${fileId + "_" + file.name}`;
+        file.mv(`uploads/${imageLink}`);
+
+        const savedFile = await File.create({
+            name: req.body.name,
+            description: req.body.description,
+            size: file.size,
+            filename: file.name,
+            url: imageLink,
+        });
+
+        await Patient.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    files: [savedFile._id, ...patient.files],
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        res.status(200).json({
+            success: true,
+            message: `File Added Successfull.`,
+            file: savedFile,
         });
     }),
 

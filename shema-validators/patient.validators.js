@@ -41,4 +41,9 @@ module.exports = {
     diagnosis: Joi.array().allow(),
     contact: Joi.array().allow(),
   }),
+
+  addFileSchema: Joi.object().keys({
+        name: Joi.string().allow(""),
+        description: Joi.string().allow(""),
+    }),
 };

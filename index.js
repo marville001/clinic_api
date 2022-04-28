@@ -4,6 +4,8 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
+const fileUpload = require("express-fileupload");
+var path = require("path");
 // Swagger
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
@@ -28,6 +30,10 @@ DbConnect();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
+
+const dir = path.join(__dirname, "uploads");
+app.use("/static", express.static(dir));
 
 // set security http headers
 app.use(helmet());
