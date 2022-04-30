@@ -35,6 +35,7 @@ module.exports = {
       doctor,
     });
   }),
+
   getAllDoctorsController: catchAsync(async (req, res) => {
     let doctors = await Doctor.find();
     res.status(200).json({
@@ -43,15 +44,17 @@ module.exports = {
       doctors,
     });
   }),
+
   getDoctorController: catchAsync(async (req, res) => {
     let { id } = req.params;
-    const doctor = await Doctor.findById(id).populate("department");
+    const doctor = await Doctor.findById(id).populate("department patients");
     res.status(200).json({
       success: true,
       message: `Successfull.`,
       doctor,
     });
   }),
+
   updateDoctorController: catchAsync(async (req, res) => {
     let { id } = req.params;
     let doctor = await Doctor.findById(id);

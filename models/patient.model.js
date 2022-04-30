@@ -55,6 +55,11 @@ const patientSchema = new mongoose.Schema({
         ref: "File",
         default: [],
     },
+    doctors: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Doctor",
+        default: [],
+    },
     contact: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "Contact",

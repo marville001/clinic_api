@@ -1,5 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const Patient = require("../models/patient.model");
+const Doctor = require("../models/doctor.model");
 const Contact = require("../models/contact.model");
 const ContactType = require("../models/contact-type.model");
 
@@ -17,11 +18,12 @@ module.exports = {
             patient,
         });
     }),
+
     getPatientController: catchAsync(async (req, res) => {
         const { id } = req.params;
         // const patient = await Patient.findById(id);
         const patient = await Patient.findById(id).populate(
-            "department diagnosis contact files"
+            "department diagnosis contact files doctors"
         );
 
         res.status(200).json({
@@ -30,6 +32,7 @@ module.exports = {
             patient,
         });
     }),
+
     getPatientsController: catchAsync(async (req, res) => {
         const patients = await Patient.find().sort([["createdAt", -1]]);
 
@@ -39,6 +42,7 @@ module.exports = {
             patients,
         });
     }),
+
     updatePatientController: catchAsync(async (req, res) => {
         const { id } = req.params;
         let patient = await Patient.findById(id);
@@ -65,6 +69,7 @@ module.exports = {
             patient,
         });
     }),
+
     deletePatientController: catchAsync(async (req, res) => {
         const { id } = req.params;
 
@@ -211,12 +216,48 @@ module.exports = {
         });
     }),
 
-    // getPatientContactController: catchAsync(async (req, res) => {
-    //   const { id } = req.params;
-    //   const patient = await Patient.findById(id);
-    //   if (!patient)
-    //     return res
-    //       .status(404)
-    //       .send({ success: false, message: "Patient not found" });
-    // }),
+    assignPatientController: catchAsync(async (req, res) => {
+        const { pid, did } = req.params;
+        let patient = await Patient.findById(pid);
+        if (!patient)
+            return res
+                .status(404)
+                .send({ success: false, message: "Patient not found" });
+
+        let doctor = await Doctor.findById(did);
+        if (!doctor)
+            return res
+                .status(404)
+                .send({ success: false, message: "Doctor not found" });
+
+        await Patient.findByIdAndUpdate(
+            pid,
+            {
+                $set: {
+                    doctors: [did, ...patient.doctors],
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        await Doctor.findByIdAndUpdate(
+            did,
+            {
+                $set: {
+                    patients: [pid, ...doctor.patients],
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        res.status(200).json({
+            success: true,
+            message: `Doctor Assigned Successfull.`,
+            doctor,
+        });
+    }),
 };
