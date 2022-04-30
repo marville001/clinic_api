@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto");
+
 const loginSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -24,6 +26,18 @@ const loginSchema = new mongoose.Schema({
         select: false,
     },
 });
+
+// Method for generating a reset token
+loginSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    this.passwordResetToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    return resetToken;
+};
 
 const Login = mongoose.model("Login", loginSchema);
 module.exports = Login;
