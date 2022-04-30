@@ -118,6 +118,22 @@ module.exports = {
         });
     }),
     resetPasswordController: catchAsync(async (req, res) => {
+        if (!req.body.password)
+            return res
+                .status(400)
+                .send({
+                    success: false,
+                    message: "Please provide req.body.password",
+                });
+
+        if (req.body.password.length < 8)
+            return res
+                .status(400)
+                .send({
+                    success: false,
+                    message: "Password should be more than 8 characters",
+                });
+
         // 1 Find the  user based on Token
         const hashedToken = crypto
             .createHash("sha256")
@@ -130,16 +146,24 @@ module.exports = {
                 $gt: Date.now(),
             },
         });
+        if (!user)
+            return res.status(400).send({
+                success: false,
+                message: "Reset Password Link Invalid or Expired !",
+            });
 
         const { password } = req.body;
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
 
+        user.passwordResetToken = null;
+        user.passwordResetExpires = null;
+
         await user.save();
 
         res.status(200).json({
             success: true,
-            message: "Password Reset Successfully",
+            message: "Password Reset Successfully. ",
         });
     }),
 };

@@ -25,6 +25,8 @@ const loginSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
 });
 
 // Method for generating a reset token
