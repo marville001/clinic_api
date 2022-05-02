@@ -8,6 +8,7 @@ const ContactType = require("../models/contact-type.model");
 const File = require("../models/files.model");
 
 const crypto = require("crypto");
+const mongoose = require("mongoose");
 
 
 module.exports = {
@@ -297,7 +298,7 @@ module.exports = {
             pid,
             {
                 $set: {
-                    doctors: [...patient.doctors.filter((id) => id !== did)],
+                    doctors: [...patient.doctors.filter((id) => id.valueOf() !== did)],
                 },
             },
             {
@@ -309,7 +310,7 @@ module.exports = {
             did,
             {
                 $set: {
-                    patients: [...doctor.patients.filter((id) => id !== pid)],
+                    patients: [...doctor.patients.filter((id) => id.valueOf() !== pid)],
                 },
             },
             {
