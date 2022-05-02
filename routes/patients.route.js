@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController, deleteContactTypeController, addPatietFileController, assignPatientController } = require("../controllers/patient.controller");
+const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController, deleteContactTypeController, addPatietFileController, assignPatientController, unAssignPatientController } = require("../controllers/patient.controller");
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
 const { createContactTypeSchema } = require("../shema-validators/contact-type.validators");
@@ -18,6 +18,7 @@ router.post("/files/:id", auth, schemaValidator(addFileSchema, "body"), addPatie
 
 //Assign doctor
 router.put("/assign-doctor/:pid/:did", auth, assignPatientController);
+router.put("/un-assign-doctor/:pid/:did", auth, unAssignPatientController);
 
 
 // Patient

@@ -260,4 +260,48 @@ module.exports = {
             doctor,
         });
     }),
+
+    unAssignPatientController: catchAsync(async (req, res) => {
+        const { pid, did } = req.params;
+        let patient = await Patient.findById(pid);
+        if (!patient)
+            return res
+                .status(404)
+                .send({ success: false, message: "Patient not found" });
+
+        let doctor = await Doctor.findById(did);
+        if (!doctor)
+            return res
+                .status(404)
+                .send({ success: false, message: "Doctor not found" });
+
+        await Patient.findByIdAndUpdate(
+            pid,
+            {
+                $set: {
+                    doctors: [...patient.doctors.filter(id=>id !== did)],
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        await Doctor.findByIdAndUpdate(
+            did,
+            {
+                $set: {
+                    patients: [...doctor.patients.filter(id=>id !== pid)],
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        res.status(200).json({
+            success: true,
+            message: `Doctor Un Assigned Successfull.`
+        });
+    }),
 };
