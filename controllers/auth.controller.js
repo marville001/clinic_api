@@ -32,6 +32,7 @@ module.exports = {
             token,
         });
     }),
+    
     loginController: catchAsync(async (req, res) => {
         const { email_username, password } = req.body;
         // Check if user email or username exists
@@ -78,6 +79,7 @@ module.exports = {
             token,
         });
     }),
+
     forgotPasswordController: catchAsync(async (req, res) => {
         const { email } = req.body;
         if (!email)
@@ -117,6 +119,7 @@ module.exports = {
             message: `Forget password link successfully sent to your email : ${user.email}.`,
         });
     }),
+
     resetPasswordController: catchAsync(async (req, res) => {
         if (!req.body.password)
             return res

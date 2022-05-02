@@ -1,11 +1,14 @@
+const sendEmail = require("../utils/sendEmail");
 const catchAsync = require("../utils/catchAsync");
+
 const Patient = require("../models/patient.model");
 const Doctor = require("../models/doctor.model");
 const Contact = require("../models/contact.model");
 const ContactType = require("../models/contact-type.model");
+const File = require("../models/files.model");
 
 const crypto = require("crypto");
-const File = require("../models/files.model");
+
 
 module.exports = {
     createPatientController: catchAsync(async (req, res) => {
@@ -254,6 +257,21 @@ module.exports = {
                 runValidators: true,
             }
         );
+
+        // Send email to doctor
+        await sendEmail({
+            to: doctor.email,
+            from: process.env.FROM_EMAIL,
+            subject: "Assigned New Patient",
+            html: `
+            <h2>Hello <strong> ${doctor.firstname}</strong></h2>
+            </br>
+            <p>This is to notify you that you have been assigned a new patient - ${
+                patient.firstname + " " + patient.lastname
+            }. </p>
+            `,
+        });
+
         res.status(200).json({
             success: true,
             message: `Doctor Assigned Successfull.`,
@@ -279,7 +297,7 @@ module.exports = {
             pid,
             {
                 $set: {
-                    doctors: [...patient.doctors.filter(id=>id !== did)],
+                    doctors: [...patient.doctors.filter((id) => id !== did)],
                 },
             },
             {
@@ -291,7 +309,7 @@ module.exports = {
             did,
             {
                 $set: {
-                    patients: [...doctor.patients.filter(id=>id !== pid)],
+                    patients: [...doctor.patients.filter((id) => id !== pid)],
                 },
             },
             {
@@ -301,7 +319,7 @@ module.exports = {
         );
         res.status(200).json({
             success: true,
-            message: `Doctor Un Assigned Successfull.`
+            message: `Doctor Un Assigned Successfull.`,
         });
     }),
 };
