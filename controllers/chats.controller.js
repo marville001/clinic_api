@@ -42,7 +42,11 @@ module.exports = {
         }
 
         if (isChat.length > 0) {
-            res.send(isChat[0]);
+            res.send({
+                message: "Successfull",
+                success: true,
+                chat: isChat[0],
+            });
             return;
         }
 
@@ -63,6 +67,42 @@ module.exports = {
         const fullChat = await Chat.findOne({ _id: createdChat._id }).populate(
             "users"
         );
-        res.status(200).json(fullChat);
+        res.status(200).json({
+            message: "Successfull",
+            success: true,
+            chat: fullChat,
+        });
+    }),
+
+    fetchAllChatsController: catchAsync(async (req, res) => {
+        const { role } = req.user;
+        Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+            .populate("users", "-password")
+            .populate("groupAdmin", "-password")
+            .populate("latestMessage")
+            .sort({ updatedAt: -1 })
+            .then(async (results) => {
+                if (role === "admin") {
+                    results = await Admin.populate(results, {
+                        path: "latestMessage.sender",
+                        select: "firstname lastname username email",
+                    });
+                } else if (role === "doctor") {
+                    results = await Doctor.populate(results, {
+                        path: "latestMessage.sender",
+                        select: "firstname lastname username email",
+                    });
+                } else if (role === "secretary") {
+                    results = await Secretary.populate(results, {
+                        path: "latestMessage.sender",
+                        select: "firstname lastname username email",
+                    });
+                }
+                res.status(200).send({
+                    message: "Successfull",
+                    success: true,
+                    chats: results,
+                });
+            });
     }),
 };
