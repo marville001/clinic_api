@@ -7,6 +7,7 @@ const {
   getDoctorController,
   updateDoctorController,
   deleteDoctorController,
+  searchDoctorController,
 } = require("../controllers/doctor.controller");
 
 const auth = require("../middlewares/auth");
@@ -20,6 +21,7 @@ router.post(
   schemaValidator(addDoctorSc, "body"),
   addDoctorController
 );
+router.get("/search", auth, searchDoctorController);
 router.get("/:id", auth, getDoctorController);
 router.put("/:id", auth, updateDoctorController);
 router.delete("/:id", auth, deleteDoctorController);
