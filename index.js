@@ -80,4 +80,47 @@ app.all("*", (req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 9003;
-app.listen(PORT, () => console.log(`Server running on port : ${PORT}`));
+const server = app.listen(PORT, () =>
+    console.log(`Server running on port : ${PORT}`)
+);
+
+const io = require("socket.io")(server, {
+    pingTimeout: 60000,
+    cors: {
+        origin: true,
+    },
+});
+
+io.on("connection", (socket) => {
+    console.log("Connected to socket.io");
+
+    socket.on("setup", (userData) => {
+        socket.join(userData._id);
+        console.log(userData._id);
+        socket.emit("connected");
+    });
+
+    socket.on("join chat", (room) => {
+        socket.join(room);
+        console.log("User joined room " + room);
+    });
+
+    socket.on("new message", (newMessageReceived) => {
+        let chat = newMessageReceived.chat;
+
+        console.log(newMessageReceived);
+
+        if (!chat.users) return console.log("chat.users not defined");
+
+        const userId = chat.users.find(
+            (user) => user._id !== newMessageReceived.sender._id
+        )._id;
+
+        socket.broadcast.to(userId).emit("message received", newMessageReceived);
+
+        // chat.users.forEach((user) => {
+        //     if (user._id === newMessageReceived.sender._id) return;
+
+        // });
+    });
+});

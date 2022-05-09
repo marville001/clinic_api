@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^6.2.9",
     "nodemailer": "^6.7.4",
+    "socket.io": "^4.5.0",
     "swagger-ui-express": "^4.3.0",
     "yamljs": "^0.3.0"
   },
