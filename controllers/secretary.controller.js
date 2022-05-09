@@ -146,13 +146,13 @@ module.exports = {
             return res.status(200).json({
                 success: true,
                 message: `Successfull.`,
-                secretaries: [],
+                results: [],
             });
 
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
         const searchRgx = rgx(search);
 
-        const secretaries = await Secretary.find({
+        const results = await Secretary.find({
             $or: [
                 {
                     firstname: { $regex: searchRgx, $options: "i" },
@@ -171,7 +171,7 @@ module.exports = {
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            secretaries,
+            results,
         });
     }),
 };

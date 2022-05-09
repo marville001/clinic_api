@@ -68,6 +68,7 @@ module.exports = {
             ]),
         });
     }),
+
     getAdminController: catchAsync(async (req, res) => {
         const { id } = req.params;
         const admin = await Admin.findById(id);
@@ -78,6 +79,7 @@ module.exports = {
             admin,
         });
     }),
+
     getAdminsController: catchAsync(async (req, res) => {
         const admins = await Admin.find().select("-password");
 
@@ -87,6 +89,7 @@ module.exports = {
             admins,
         });
     }),
+
     updateAdminController: catchAsync(async (req, res) => {
         const { id } = req.params;
         let admin = await Admin.findById(id);
@@ -113,6 +116,7 @@ module.exports = {
             admin,
         });
     }),
+
     deleteAdminController: catchAsync(async (req, res) => {
         const { id } = req.params;
 
@@ -128,6 +132,42 @@ module.exports = {
         res.status(200).json({
             success: true,
             message: `Deleted Successfull.`,
+        });
+    }),
+
+    searchAdminController: catchAsync(async (req, res) => {
+        const search = req.query.search || "";
+
+        if (search === "")
+            return res.status(200).json({
+                success: true,
+                message: `Successfull.`,
+                results: [],
+            });
+
+        const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
+        const searchRgx = rgx(search);
+
+        const results = await Admin.find({
+            $or: [
+                {
+                    firstname: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    lastname: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    email: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    username: { $regex: searchRgx, $options: "i" },
+                },
+            ],
+        });
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            results,
         });
     }),
 };

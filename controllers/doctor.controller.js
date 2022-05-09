@@ -120,13 +120,13 @@ module.exports = {
             return res.status(200).json({
                 success: true,
                 message: `Successfull.`,
-                doctors: [],
+                results: [],
             });
 
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
         const searchRgx = rgx(search);
 
-        const doctors = await Doctor.find({
+        const results = await Doctor.find({
             $or: [
                 {
                     firstname: { $regex: searchRgx, $options: "i" },
@@ -145,7 +145,7 @@ module.exports = {
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            doctors,
+            results,
         });
     }),
 };
