@@ -138,8 +138,6 @@ module.exports = {
                     })
                 ).then((users) => users);
 
-                console.log(usersArray[0]);
-
                 const finalResults = results.map((resu, idx) => {
                     const details = usersArray[idx].map((user) => {
                         return {
@@ -152,7 +150,6 @@ module.exports = {
 
                     return { ...resu._doc, users: details };
                 });
-                console.log(finalResults);
 
                 res.status(200).send({
                     message: "Successfull",
