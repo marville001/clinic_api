@@ -7,10 +7,15 @@ const Message = require("../models/message.model");
 
 module.exports = {
     fetchMessagesController: catchAsync(async (req, res) => {
-        const messages = await Message.find({ chat: req.params.chatId })
+        let messages = await Message.find({ chat: req.params.chatId })
             .populate("sender", "firstname lastname username email")
             .populate("chat");
-        res.json(messages);
+
+        res.status(200).send({
+            message: "Successfull",
+            success: true,
+            messages,
+        });
     }),
     sendMessageController: catchAsync(async (req, res) => {
         const { content, chatId } = req.body;
@@ -43,6 +48,10 @@ module.exports = {
             latestMessage: message,
         });
 
-        res.json(message);
+        res.status(200).send({
+            message: "Successfull",
+            success: true,
+            message,
+        });
     }),
 };

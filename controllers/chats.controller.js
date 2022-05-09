@@ -7,21 +7,22 @@ const Admin = require("../models/admin.model");
 module.exports = {
     createOrFetchChatController: catchAsync(async (req, res) => {
         const { role, _id } = req.user;
-        const { userId } = req.body;
+        const { userId, userRole } = req.body;
 
-        if (!userId)
-            return res
-                .status(400)
-                .send({ success: false, message: "UserId is required" });
+        if (!userId || !userRole)
+            return res.status(400).send({
+                success: false,
+                message: "UserId and User Role is required",
+            });
 
         let isChat = await Chat.find({
             isGroupChat: false,
             $and: [
-                { users: { $elemMatch: { $eq: _id } } },
-                { users: { $elemMatch: { $eq: userId } } },
+                { "users.user": { $eq: _id } },
+                { "users.user": { $eq: userId } },
             ],
         })
-            .populate("users")
+            .populate("users.user")
             .populate("latestMessage");
 
         if (role === "admin") {
@@ -50,16 +51,30 @@ module.exports = {
             return;
         }
 
+        const getRoleModel = (role) => {
+            if (role === "secretary") return "Secretary";
+            if (role === "doctor") return "Doctor";
+
+            return "Admin";
+        };
+
         let chatData = {
             chatName: "sender",
             isGroupChat: false,
-            users: [req.user._id, userId],
-            model_type:
-                role === "doctor"
-                    ? "Doctor"
-                    : role === "admin"
-                    ? "Admin"
-                    : "Secretary",
+            users: [
+                {
+                    user: req.user._id,
+                    user_type: getRoleModel(role),
+                },
+                {
+                    user: userId,
+                    user_type: getRoleModel(userRole),
+                },
+            ],
+            groupAdmin: {
+                user: req.user._id,
+                admin_type: getRoleModel(userRole),
+            },
         };
 
         const createdChat = await Chat.create(chatData);
@@ -75,9 +90,9 @@ module.exports = {
     }),
 
     fetchAllChatsController: catchAsync(async (req, res) => {
-        const { role } = req.user;
-        Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
-            .populate("users", "-password")
+        const { role, _id } = req.user;
+        Chat.find({ "users.user": { $eq: _id } })
+            // .populate("users._id", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage")
             .sort({ updatedAt: -1 })
@@ -98,10 +113,51 @@ module.exports = {
                         select: "firstname lastname username email",
                     });
                 }
+
+                const usersArray = await Promise.all(
+                    results.map(async (result) => {
+                        const resss = await Promise.all(
+                            result.users.map(async (user) => {
+                                if (user.user_type === "Admin")
+                                    return await Admin.findOne({
+                                        _id: user.user,
+                                    });
+
+                                if (user.user_type === "Doctor")
+                                    return await Doctor.findOne({
+                                        _id: user.user,
+                                    });
+
+                                if (user.user_type === "Secretary")
+                                    return await Secretary.findOne({
+                                        _id: user.user,
+                                    });
+                            })
+                        );
+                        return resss;
+                    })
+                ).then((users) => users);
+
+                console.log(usersArray[0]);
+
+                const finalResults = results.map((resu, idx) => {
+                    const details = usersArray[idx].map((user) => {
+                        return {
+                            firstname: user.firstname,
+                            lastname: user.lastname,
+                            _id: user._id,
+                            role: user.role,
+                        };
+                    });
+
+                    return { ...resu._doc, users: details };
+                });
+                console.log(finalResults);
+
                 res.status(200).send({
                     message: "Successfull",
                     success: true,
-                    chats: results,
+                    chats: finalResults,
                 });
             });
     }),
