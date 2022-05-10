@@ -1,11 +1,25 @@
 const router = require("express").Router();
 
-const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController, deleteContactTypeController, addPatietFileController, assignPatientController, unAssignPatientController } = require("../controllers/patient.controller");
+const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController, deleteContactTypeController, addPatietFileController, assignPatientController, unAssignPatientController, createCommentTypeController, getCommentTypesController, deleteCommentTypeController, updateCommentTypeController, createCommentController, getCommentsController, updateCommentController, deleteCommentController } = require("../controllers/patient.controller");
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
+const { createCommentTypeSchema, updateCommentTypeSchema } = require("../shema-validators/comment-type.validators");
+const { createCommentSchema, updateCommentSchema } = require("../shema-validators/comment.validators");
 const { createContactTypeSchema } = require("../shema-validators/contact-type.validators");
 const { createContactSchema } = require("../shema-validators/contact.validators");
 const { createPatientSchema, updatePatientSchema, addFileSchema } = require("../shema-validators/patient.validators");
+
+//Comment Type
+router.post("/comment-type", auth, schemaValidator(createCommentTypeSchema, "body"), createCommentTypeController);
+router.get("/comment-type", auth, getCommentTypesController);
+router.delete("/comment-type/:id", auth, deleteCommentTypeController);
+router.put("/comment-type/:id", auth, schemaValidator(updateCommentTypeSchema, "body"), updateCommentTypeController);
+
+// Comment
+router.post("/comment", auth, schemaValidator(createCommentSchema, "body"), createCommentController);
+router.put("/comment/:id", auth, schemaValidator(updateCommentSchema, "body"), updateCommentController);
+router.delete("/comment/:id", auth, deleteCommentController);
+router.get("/comment", auth, getCommentsController);
 
 
 // Contact Type
