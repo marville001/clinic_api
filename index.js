@@ -92,7 +92,7 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log("Connected to socket.io");
+    // console.log("Connected to socket.io");
 
     socket.on("setup", (userData) => {
         socket.join(userData._id);
@@ -101,11 +101,15 @@ io.on("connection", (socket) => {
 
     socket.on("join chat", (room) => {
         socket.join(room);
-        console.log("User joined room " + room);
+        // console.log("User joined room " + room);
     });
 
-    socket.on("typing", (room) => socket.in(room).emit("typing"))
-    socket.on("stop typing", (room) => socket.in(room).emit("stop typing"))
+    socket.on("typing", (room) =>
+        socket.broadcast.to(room).emit("typing", room)
+    );
+    socket.on("stop typing", (room) =>
+        socket.broadcast.to(room).emit("stop typing")
+    );
 
     socket.on("new message", (newMessageReceived) => {
         let chat = newMessageReceived.chat;
@@ -116,8 +120,6 @@ io.on("connection", (socket) => {
             (user) => user.user !== newMessageReceived.sender._id
         ).user;
 
-
         socket.in(userId).emit("message received", newMessageReceived);
-
     });
 });
