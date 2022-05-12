@@ -16,7 +16,8 @@ router.delete("/comment-type/:id", auth, deleteCommentTypeController);
 router.put("/comment-type/:id", auth, schemaValidator(updateCommentTypeSchema, "body"), updateCommentTypeController);
 
 // Comment
-router.post("/comment", auth, schemaValidator(createCommentSchema, "body"), createCommentController);
+router.post("/comment/:id", auth, schemaValidator(createCommentSchema, "body"), createCommentController);
+
 router.put("/comment/:id", auth, schemaValidator(updateCommentSchema, "body"), updateCommentController);
 router.delete("/comment/:id", auth, deleteCommentController);
 router.get("/comment", auth, getCommentsController);

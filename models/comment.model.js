@@ -1,3 +1,4 @@
+const { string } = require("joi");
 const mongoose = require("mongoose");
 const Admin = require("./admin.model");
 const Doctor = require("./doctor.model");
@@ -6,22 +7,18 @@ const Patient = require("./patient.model");
 const commentSchema = new mongoose.Schema({
   commenttype: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: "CommentType",
-  },
-  patientId: {
-    type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "Patient",  },
+  },
+
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Doctor",
+        required: true,
+        ref: "Doctor",
   },
   senderRole: {
     type: String,
-    enum: ["doctor", "patient","admin"],
-    lowercase: true,
+    required: true,
   },
   comment: {
     type: String,
