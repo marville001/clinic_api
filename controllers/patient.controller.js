@@ -26,7 +26,6 @@ module.exports = {
 
   getPatientController: catchAsync(async (req, res) => {
     const { id } = req.params;
-    // const patient = await Patient.findById(id);
     const patient = await Patient.findById(id).populate(
       "department diagnosis contact comment files doctors"
     );
@@ -403,31 +402,35 @@ module.exports = {
     });
   }),
 
+  
   createCommentController: catchAsync(async (req, res) => {
-    const comment = await Comment.create(req.body);
-    comment.save({ validateBeforeSave: false });
+    const { id } = req.params;
+    let patient = await Patient.findById(id);
+    if (!patient)
+      return res
+        .status(404)
+        .send({ success: false, message: "Patient not found" });
 
+    const comment = await Comment.create(req.body);
+
+    patient = await Patient.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          comment: [...patient.comment, comment._id],
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     res.status(200).json({
       success: true,
-      message: `comment added successfull.`,
+      message: `Comment Added Successfull.`,
       comment,
     });
   }),
-  //   asdfg
-
-  //   getCommentsController: catchAsync(async (req, res) => {
-  //     const { id } = req.params;
-  //     // const patient = await Patient.findById(id);
-  //     const comment = await Comment.findById(id).populate(
-  //       "commenttype patientId senderId senderRole"
-  //     );
-
-  //     res.status(200).json({
-  //       success: true,
-  //       message: `Successfull.`,
-  //       comment,
-  //     });
-  //   }),
 
     getCommentsController: catchAsync(async (req, res) => {
       const comments = await Comment.find().sort([["createdAt", -1]]);

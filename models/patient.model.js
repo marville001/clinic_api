@@ -63,12 +63,12 @@ const patientSchema = new mongoose.Schema({
     comment: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "Comment",
-        required: true,
+        default: [],
     },
     contact: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "Contact",
-        required: true,
+        default: [],
     },
     createdAt: {
         type: String,

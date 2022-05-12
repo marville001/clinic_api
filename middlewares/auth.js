@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 
 module.exports = function (req, res, next) {
+   
     const bearerHeader = req.headers["authorization"];
 
     if (typeof bearerHeader === "undefined")
