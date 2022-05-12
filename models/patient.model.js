@@ -60,10 +60,15 @@ const patientSchema = new mongoose.Schema({
         ref: "Doctor",
         default: [],
     },
+    comment: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Comment",
+        default: [],
+    },
     contact: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "Contact",
-        required: true,
+        default: [],
     },
     createdAt: {
         type: String,

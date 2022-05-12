@@ -11,6 +11,8 @@ module.exports = {
     gender: Joi.string().required(),
     department: Joi.string().required(),
     address: Joi.string().required(),
+    contact: Joi.array().required(),
+    comment: Joi.array().required(),
     diagnosis: Joi.array()
       .required()
       .error((errors) => {
@@ -25,7 +27,7 @@ module.exports = {
         });
         return errors;
       }),
-    contact: Joi.array().required(),
+
   }),
 
   updatePatientSchema: Joi.object().keys({
@@ -40,6 +42,8 @@ module.exports = {
     address: Joi.string().allow(""),
     diagnosis: Joi.array().allow(),
     contact: Joi.array().allow(),
+    comment: Joi.array().allow(),
+
   }),
 
   addFileSchema: Joi.object().keys({
