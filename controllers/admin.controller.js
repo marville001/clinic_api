@@ -81,7 +81,25 @@ module.exports = {
     }),
 
     getAdminsController: catchAsync(async (req, res) => {
-        const admins = await Admin.find().select("-password");
+        const search = req.query.search || "";
+        const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
+        const searchRgx = rgx(search);
+        const admins = await Admin.find({
+            $or: [
+                {
+                    firstname: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    lastname: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    email: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    username: { $regex: searchRgx, $options: "i" },
+                },
+            ],
+        }).select("-password");
 
         res.status(200).json({
             success: true,
