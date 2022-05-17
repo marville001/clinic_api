@@ -26,7 +26,7 @@ module.exports = {
 
   getPatientController: catchAsync(async (req, res) => {
     const { id } = req.params;
-    const patient = await Patient.findById(id).populate(
+    let patient = await Patient.findById(id).populate(
       "department diagnosis contact comment files doctors"
     );
 
@@ -402,7 +402,6 @@ module.exports = {
     });
   }),
 
-  
   createCommentController: catchAsync(async (req, res) => {
     const { id } = req.params;
     let patient = await Patient.findById(id);
@@ -410,6 +409,18 @@ module.exports = {
       return res
         .status(404)
         .send({ success: false, message: "Patient not found" });
+
+    const { senderRole } = req.body;
+
+    const getRoleModel = (role) => {
+      if (role === "secretary") return "Secretary";
+      if (role === "doctor") return "Doctor";
+
+      return "Admin";
+    };
+
+    req.body.sender_type = getRoleModel(senderRole);
+    req.body.patientId = id;
 
     const comment = await Comment.create(req.body);
 
@@ -432,15 +443,18 @@ module.exports = {
     });
   }),
 
-    getCommentsController: catchAsync(async (req, res) => {
-      const comments = await Comment.find().sort([["createdAt", -1]]);
+  getCommentsController: catchAsync(async (req, res) => {
+    const { pid } = req.params;
+    const comments = await Comment.find({ patientId: pid })
+      .populate("senderId")
+      .sort([["createdAt", -1]]);
 
-      res.status(200).json({
-        success: true,
-        message: `Successfull.`,
-        comments,
-      });
-    }),
+    res.status(200).json({
+      success: true,
+      message: `Successfull.`,
+      comments,
+    });
+  }),
 
   updateCommentController: catchAsync(async (req, res) => {
     const { id } = req.params;
