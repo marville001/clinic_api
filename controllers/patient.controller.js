@@ -26,8 +26,9 @@ module.exports = {
 
   getPatientController: catchAsync(async (req, res) => {
     const { id } = req.params;
+    console.log(id)
     let patient = await Patient.findById(id).populate(
-      "department diagnosis contact comment files doctors"
+      "department diagnosis contact files doctors"
     );
 
     res.status(200).json({
