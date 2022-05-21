@@ -13,13 +13,18 @@ const commentSchema = new mongoose.Schema({
 
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Doctor",
+    required: true,
+    refPath: "sender_type",
+  },
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
   },
   senderRole: {
     type: String,
     required: true,
   },
+
   comment: {
     type: String,
     required: true,
@@ -28,6 +33,11 @@ const commentSchema = new mongoose.Schema({
   createdAt: {
     type: String,
     default: Date.now(),
+  },
+  sender_type: {
+    type: String,
+    enum: ["Admin", "Secretary", "Doctor"],
+    required: true,
   },
 });
 

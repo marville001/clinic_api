@@ -20,7 +20,7 @@ router.post("/comment/:id", auth, schemaValidator(createCommentSchema, "body"), 
 
 router.put("/comment/:id", auth, schemaValidator(updateCommentSchema, "body"), updateCommentController);
 router.delete("/comment/:id", auth, deleteCommentController);
-router.get("/comment", auth, getCommentsController);
+router.get("/comment/:pid", auth, getCommentsController);
 
 
 // Contact Type
