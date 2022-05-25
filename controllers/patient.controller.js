@@ -155,7 +155,6 @@ module.exports = {
         .send({ success: false, message: "Patient not found" });
 
     const contact = await Contact.create(req.body);
-
     patient = await Patient.findByIdAndUpdate(
       id,
       {
@@ -175,6 +174,20 @@ module.exports = {
     });
   }),
 
+  deleteContactController: catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const contact = await Contact.findById(id);
+    if (!contact)
+      return res
+        .status(404)
+        .send({ success: false, message: "Contact not found" });
+    await Contact.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: `Deleted Successfull.`,
+    });
+  }),
   addPatietFileController: catchAsync(async (req, res) => {
     const { id } = req.params;
     let patient = await Patient.findById(id);
