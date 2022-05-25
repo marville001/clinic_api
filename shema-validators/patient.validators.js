@@ -11,8 +11,8 @@ module.exports = {
     gender: Joi.string().required(),
     department: Joi.string().required(),
     address: Joi.string().required(),
-    contact: Joi.array().required(),
-    comment: Joi.array().required(),
+    // contact: Joi.array().required(),
+    // comment: Joi.array().required(),
     diagnosis: Joi.array()
       .required()
       .error((errors) => {

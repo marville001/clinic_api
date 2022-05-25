@@ -37,7 +37,27 @@ module.exports = {
     }),
 
     getAllDoctorsController: catchAsync(async (req, res) => {
-        let doctors = await Doctor.find();
+        const search = req.query.search || "";
+        const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
+        const searchRgx = rgx(search);
+
+        let doctors = await Doctor.find({
+            $or: [
+                {
+                    firstname: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    lastname: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    email: { $regex: searchRgx, $options: "i" },
+                },
+                {
+                    username: { $regex: searchRgx, $options: "i" },
+                },
+            ],
+        });
+        
         res.status(200).json({
             success: true,
             message: `Successfull.`,
