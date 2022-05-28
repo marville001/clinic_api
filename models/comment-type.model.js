@@ -11,6 +11,10 @@ const commentTypeSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    viewBy: {
+        type: String,
+        default: "everyone",
+    },
     createdAt: {
         type: String,
         default: Date.now(),

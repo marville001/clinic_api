@@ -169,49 +169,50 @@ module.exports = {
                 .status(404)
                 .send({ success: false, message: "Patient not found" });
 
+        const contact = await Contact.create(req.body);
+        patient = await Patient.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    contact: [...patient.contact, contact._id],
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+        res.status(200).json({
+            success: true,
+            message: `Contact Added Successfull.`,
+            contact,
+        });
+    }),
 
-    const contact = await Contact.create(req.body);
-    patient = await Patient.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          contact: [...patient.contact, contact._id],
-        },
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    res.status(200).json({
-      success: true,
-      message: `Contact Added Successfull.`,
-      contact,
-    });
-  }),
+    deleteContactController: catchAsync(async (req, res) => {
+        const { id } = req.params;
+        const contact = await Contact.findById(id);
+        if (!contact)
+            return res
+                .status(404)
+                .send({ success: false, message: "Contact not found" });
+        await Contact.findByIdAndDelete(id);
 
-  deleteContactController: catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const contact = await Contact.findById(id);
-    if (!contact)
-      return res
-        .status(404)
-        .send({ success: false, message: "Contact not found" });
-    await Contact.findByIdAndDelete(id);
+        res.status(200).json({
+            success: true,
+            message: `Deleted Successfull.`,
+        });
+    }),
 
-    res.status(200).json({
-      success: true,
-      message: `Deleted Successfull.`,
-    });
-  }),
-  addPatietFileController: catchAsync(async (req, res) => {
-    const { id } = req.params;
-    let patient = await Patient.findById(id);
-    if (!patient)
-      return res
-        .status(404)
-        .send({ success: false, message: "Patient not found" });
-  }),
+    addPatietFileController: catchAsync(async (req, res) => {
+        const { id } = req.params;
+        let patient = await Patient.findById(id);
+        if (!patient)
+            return res
+                .status(404)
+                .send({ success: false, message: "Patient not found" });
+    }),
+
     createContactController: catchAsync(async (req, res) => {
         const { id } = req.params;
         let patient = await Patient.findById(id);
@@ -396,7 +397,9 @@ module.exports = {
     }),
 
     createCommentTypeController: catchAsync(async (req, res) => {
-        const { name, description } = req.body;
+        const { name } = req.body;
+
+        console.log("hdfjhdfdf");
 
         let commentType = await CommentType.findOne({ name });
         if (commentType)
@@ -406,7 +409,7 @@ module.exports = {
                 message: "Comment Type with given name exists",
             });
 
-        commentType = await CommentType.create({ name, description });
+        commentType = await CommentType.create(req.body);
 
         commentType.save({ validateBeforeSave: false });
 
@@ -414,10 +417,10 @@ module.exports = {
             success: true,
 
             message: `Comment Type added successfull.`,
-
             commentType,
         });
     }),
+
     deleteCommentTypeController: catchAsync(async (req, res) => {
         const { id } = req.params;
 
@@ -446,6 +449,7 @@ module.exports = {
             commentType,
         });
     }),
+
     updateCommentTypeController: catchAsync(async (req, res) => {
         const { id } = req.params;
         let commentType = await CommentType.findById(id);
@@ -516,190 +520,6 @@ module.exports = {
 
     getCommentsController: catchAsync(async (req, res) => {
         const { pid } = req.params;
-        const comments = await Comment.find({ patientId: pid })
-            .populate("senderId")
-            .sort([["createdAt", -1]]);
-
-        res.status(200).json({
-            success: true,
-            message: `Successfull.`,
-            comments,
-        });
-    }),
-
-    unAssignPatientController: catchAsync(async (req, res) => {
-        const { pid, did } = req.params;
-        let patient = await Patient.findById(pid);
-        if (!patient)
-            return res
-                .status(404)
-                .send({ success: false, message: "Patient not found" });
-
-        let doctor = await Doctor.findById(did);
-        if (!doctor)
-            return res
-                .status(404)
-                .send({ success: false, message: "Doctor not found" });
-
-        await Patient.findByIdAndUpdate(
-            pid,
-            {
-                $set: {
-                    doctors: [
-                        ...patient.doctors.filter((id) => id.valueOf() !== did),
-                    ],
-                },
-            },
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
-        await Doctor.findByIdAndUpdate(
-            did,
-            {
-                $set: {
-                    patients: [
-                        ...doctor.patients.filter((id) => id.valueOf() !== pid),
-                    ],
-                },
-            },
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
-        res.status(200).json({
-            success: true,
-            message: `Doctor Un Assigned Successfull.`,
-        });
-    }),
-
-    createCommentTypeController: catchAsync(async (req, res) => {
-        const { name, description } = req.body;
-
-        let commentType = await CommentType.findOne({ name });
-        if (commentType)
-            return res.status(400).send({
-                success: false,
-
-                message: "Comment Type with given name exists",
-            });
-
-        commentType = await CommentType.create({ name, description });
-
-        commentType.save({ validateBeforeSave: false });
-
-        res.status(200).json({
-            success: true,
-
-            message: `Comment Type added successfull.`,
-
-            commentType,
-        });
-    }),
-    deleteCommentTypeController: catchAsync(async (req, res) => {
-        const { id } = req.params;
-
-        const commentType = await CommentType.findById(id);
-        if (!commentType)
-            return res
-                .status(404)
-                .send({ success: false, message: "CommentType not found" });
-
-        await CommentType.findByIdAndDelete(id);
-
-        res.status(200).json({
-            success: true,
-            message: `Deleted Successfull.`,
-        });
-    }),
-
-    getCommentTypesController: catchAsync(async (req, res) => {
-        const commentType = await CommentType.find().sort([["createdAt", -1]]);
-
-        res.status(200).json({
-            success: true,
-
-            message: `Successfull.`,
-
-            commentType,
-        });
-    }),
-    updateCommentTypeController: catchAsync(async (req, res) => {
-        const { id } = req.params;
-        let commentType = await CommentType.findById(id);
-
-        if (!commentType)
-            return res
-                .status(400)
-                .send({ success: false, message: "Invalid Comment Type Id" });
-
-        commentType = await CommentType.findByIdAndUpdate(
-            id,
-            {
-                $set: req.body,
-            },
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
-
-        res.status(200).json({
-            success: true,
-            message: `Successfull.`,
-            commentType,
-        });
-    }),
-
-    createCommentController: catchAsync(async (req, res) => {
-        const { id } = req.params;
-
-        let patient = await Patient.findById(id);
-
-        if (!patient)
-            return res
-                .status(404)
-                .send({ success: false, message: "Patient not found" });
-
-        const { senderRole } = req.body;
-
-        const getRoleModel = (role) => {
-            if (role === "secretary") return "Secretary";
-            if (role === "doctor") return "Doctor";
-            return "Admin";
-        };
-
-        req.body.sender_type = getRoleModel(senderRole);
-
-        req.body.patientId = id;
-
-        const comment = await Comment.create(req.body);
-
-        patient = await Patient.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    comment: [...patient.comment, comment._id],
-                },
-            },
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
-
-        res.status(200).json({
-            success: true,
-            message: `Comment Added Successfull.`,
-            comment,
-        });
-    }),
-
-    getCommentsController: catchAsync(async (req, res) => {
-        const { pid } = req.params;
-
         const comments = await Comment.find({ patientId: pid })
             .populate("senderId")
             .sort([["createdAt", -1]]);
