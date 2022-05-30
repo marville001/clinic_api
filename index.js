@@ -23,6 +23,7 @@ const patientsRoutes = require("./routes/patients.route");
 const chatsRoutes = require("./routes/chats.route");
 const messagesRoutes = require("./routes/messages.route");
 const appointmentsRoutes = require("./routes/appointments.route");
+const notificationsRoutes = require("./routes/notifications.route");
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use("/api/patients", patientsRoutes);
 app.use("/api/chats", chatsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/appointments", appointmentsRoutes);
+app.use("/api/notifications", notificationsRoutes);
 
 // handling all (get,post,update,delete.....) unhandled routes
 app.all("*", (req, res, next) => {
