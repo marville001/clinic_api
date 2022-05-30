@@ -527,7 +527,7 @@ module.exports = {
                     sendEmail({
                         to: doc.email,
                         from: process.env.FROM_EMAIL,
-                        subject: "Assigned New Patient",
+                        subject: `Patient Comment - ${savedComment?.commenttype.name}`,
                         html: `
                         <h2>Hello <strong> ${doc.firstname}</strong></h2>
                         </br>

@@ -1,11 +1,32 @@
 const Appointment = require("../models/appointment.model");
+const Doctor = require("../models/doctor.model");
 const catchAsync = require("../utils/catchAsync");
+const sendEmail = require("../utils/sendEmail");
 
 module.exports = {
     createAppointmentController: catchAsync(async (req, res) => {
         const appointment = await Appointment.create(req.body);
 
         appointment.save({ validateBeforeSave: false });
+
+        const { doctorId } = req.body;
+
+        let doctor = await Doctor.findById(doctorId);
+
+        if (doctor) {
+            sendEmail({
+                to: doctor.email,
+                from: process.env.FROM_EMAIL,
+                subject: `New Appointment - ${appointment.title}`,
+                html: `
+                <h2>Hello <strong> ${doctor.firstname}</strong></h2>
+                </br>
+                <p>
+                    You have a new appointment - <b>${appointment.title}</b>.
+                </p>
+                `,
+            });
+        }
 
         res.status(200).json({
             success: true,
