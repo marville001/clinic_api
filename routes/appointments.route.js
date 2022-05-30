@@ -7,7 +7,7 @@ const schemaValidator = require("../middlewares/schemaValidator");
 const { createAppointmentSchema, updateAppointmentSchema } = require("../shema-validators/appointment.validators");
 
 router.get("/:id", auth, getAppointmentsController);
-router.post("/", auth, schemaValidator(updateAppointmentSchema, "body"),  createAppointmentController);
-router.put("/:id", auth, schemaValidator(createAppointmentSchema, "body"), updateAppointmentController);
+router.post("/", auth, schemaValidator(createAppointmentSchema, "body"),  createAppointmentController);
+router.put("/:id", auth, schemaValidator(updateAppointmentSchema, "body"), updateAppointmentController);
 
 module.exports = router;
