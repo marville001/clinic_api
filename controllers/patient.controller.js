@@ -497,7 +497,7 @@ module.exports = {
         req.body.sender_type = getRoleModel(senderRole);
         req.body.patientId = id;
 
-        const comment = await Comment.create(req.body);
+        let comment = await Comment.create(req.body);
 
         patient = await Patient.findByIdAndUpdate(
             id,
@@ -510,12 +510,43 @@ module.exports = {
                 new: true,
                 runValidators: true,
             }
+        ).populate("doctors");
+
+        savedComment = await Comment.findById(comment._id).populate(
+            "commenttype"
         );
+
+        Promise.all(
+            patient.doctors.map((doc) => {
+                if (
+                    savedComment?.commenttype?.viewBy === "everyone" ||
+                    savedComment?.commenttype?.viewBy === "doctors" ||
+                    (savedComment?.commenttype?.viewBy === "admins" && doc.isAdmin)
+                ) {
+                    // Send email to doctor
+                    sendEmail({
+                        to: doc.email,
+                        from: process.env.FROM_EMAIL,
+                        subject: "Assigned New Patient",
+                        html: `
+                        <h2>Hello <strong> ${doc.firstname}</strong></h2>
+                        </br>
+                        <p>
+                            New Comment on Patient - <b>${ patient.firstname + " " + patient.lastname}</b>.
+                            Type <strong>${savedComment?.commenttype.name}</strong> - 
+                            <i>${savedComment.comment}</i>
+                        </p>
+                        `,
+                    });
+                }
+            })
+        );
+
         res.status(200).json({
             success: true,
             message: `Comment Added Successfull.`,
             comment,
-        });
+        });        
     }),
 
     getCommentsController: catchAsync(async (req, res) => {
