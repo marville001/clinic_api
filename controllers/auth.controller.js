@@ -108,7 +108,7 @@ module.exports = {
             from: process.env.FROM_EMAIL,
             subject: "Your Password reset link. (will expire in 20 minutes)",
             html: `
-            <h2>Hello <strong> ${user.firstname}</strong></h2>
+            <h2>Hello <strong> ${user.username}</strong></h2>
             </br>
             <a href="${resetURL}">Click here to reset your password</a>
             `,
