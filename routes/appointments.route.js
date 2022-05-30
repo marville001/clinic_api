@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { getAppointmentsController, createAppointmentController, updateAppointmentController, deleteAppointmentController } = require("../controllers/appointments.controller");
+const { getAppointmentsController, createAppointmentController, updateAppointmentController, deleteAppointmentController, getLatestAppointmentsController } = require("../controllers/appointments.controller");
 
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
