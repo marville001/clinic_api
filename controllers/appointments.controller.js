@@ -102,6 +102,24 @@ module.exports = {
 
         await Appointment.findByIdAndDelete(id);
 
+        let doctor = await Doctor.findById(appointment.doctorId);
+
+        if (doctor) {
+            sendEmail({
+                to: doctor.email,
+                from: process.env.FROM_EMAIL,
+                subject: `Deleted Appointment - ${appointment.title}`,
+                html: `
+                <h2>Hello <strong> ${doctor.firstname}</strong></h2>
+                </br>
+                <p>
+                    Your  - <b>${appointment.title}</b>, has been deleted.
+                </p>
+                `,
+            });
+        }
+        
+
         res.status(200).json({
             success: true,
             message: `Deleted Successfull.`,
