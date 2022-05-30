@@ -28,6 +28,7 @@ const app = express();
 
 // Db connection
 const DbConnect = require("./utils/dbConnect");
+const Notification = require("./models/notifications.model");
 DbConnect();
 
 app.use(cors());
@@ -112,6 +113,19 @@ io.on("connection", (socket) => {
     socket.on("stop typing", (room) =>
         socket.broadcast.to(room).emit("stop typing")
     );
+
+    socket.on("new notification", async (details) => {
+        const { room, notification } = details;
+
+        const result = await Notification.create({
+            ...notification,
+            userId: room,
+        });
+        
+        result.save({ validateBeforeSave: false });
+
+        socket.broadcast.to(room).emit("new notification", result);
+    });
 
     socket.on("new message", (newMessageReceived) => {
         let chat = newMessageReceived.chat;
