@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { getAppointmentsController, createAppointmentController, updateAppointmentController } = require("../controllers/appointments.controller");
+const { getAppointmentsController, createAppointmentController, updateAppointmentController, deleteAppointmentController } = require("../controllers/appointments.controller");
 
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
@@ -9,5 +9,6 @@ const { createAppointmentSchema, updateAppointmentSchema } = require("../shema-v
 router.get("/:id", auth, getAppointmentsController);
 router.post("/", auth, schemaValidator(createAppointmentSchema, "body"),  createAppointmentController);
 router.put("/:id", auth, schemaValidator(updateAppointmentSchema, "body"), updateAppointmentController);
+router.delete("/:id", auth, deleteAppointmentController);
 
 module.exports = router;

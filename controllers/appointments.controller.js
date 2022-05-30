@@ -47,6 +47,7 @@ module.exports = {
             appointments,
         });
     }),
+
     updateAppointmentController: catchAsync(async (req, res) => {
         const { id } = req.params;
         let appointment = await Appointment.findById(id);
@@ -71,6 +72,24 @@ module.exports = {
             success: true,
             message: `Successfull.`,
             appointment,
+        });
+    }),
+
+    deleteAppointmentController: catchAsync(async (req, res) => {
+        const { id } = req.params;
+
+        const appointment = await Appointment.findById(id);
+        
+        if (!appointment)
+            return res
+                .status(404)
+                .send({ success: false, message: "Appointment does not exist" });
+
+        await Appointment.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: `Deleted Successfull.`,
         });
     }),
 };
