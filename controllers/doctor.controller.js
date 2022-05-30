@@ -57,7 +57,7 @@ module.exports = {
                 },
             ],
         });
-        
+
         res.status(200).json({
             success: true,
             message: `Successfull.`,
@@ -166,6 +166,44 @@ module.exports = {
             success: true,
             message: `Successfull.`,
             results,
+        });
+    }),
+
+    makeDoctorAdminController: catchAsync(async (req, res) => {
+        let { id } = req.params;
+        let doctor = await Doctor.findById(id);
+
+        if (!doctor)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid doctor Id" });
+
+        const query = await Doctor.where({ _id: id }).updateMany({
+            isAdmin: true,
+        });
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            query,
+        });
+    }),
+
+    revokeDoctorAdminController: catchAsync(async (req, res) => {
+        let { id } = req.params;
+        let doctor = await Doctor.findById(id);
+
+        if (!doctor)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid doctor Id" });
+
+        const query = await Doctor.where({ _id: id }).updateMany({
+            isAdmin: false,
+        });
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            query,
         });
     }),
 };
