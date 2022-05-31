@@ -10,6 +10,7 @@ const {
   searchDoctorController,
   makeDoctorAdminController,
   revokeDoctorAdminController,
+  getAssignedPatientsController,
 } = require("../controllers/doctor.controller");
 
 const auth = require("../middlewares/auth");
@@ -20,6 +21,7 @@ router.get("/", auth, getAllDoctorsController);
 router.post("/", auth, schemaValidator(addDoctorSc, "body"), addDoctorController);
 router.get("/search", auth, searchDoctorController);
 router.get("/:id", auth, getDoctorController);
+router.get("/:id/assigned-patients", auth, getAssignedPatientsController);
 router.put("/:id/make-admin", auth, makeDoctorAdminController);
 router.put("/:id/revoke-admin", auth, revokeDoctorAdminController);
 router.put("/:id", auth, updateDoctorController);

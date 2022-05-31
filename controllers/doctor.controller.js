@@ -1,6 +1,7 @@
 const Doctor = require("../models/doctor.model");
 const catchAsync = require("../utils/catchAsync");
 const Login = require("../models/login.model");
+const Patient = require("../models/patient.model");
 const bcrypt = require("bcrypt");
 
 module.exports = {
@@ -165,13 +166,21 @@ module.exports = {
                 .status(400)
                 .send({ success: false, message: "Invalid doctor Id" });
 
-        const query = await Doctor.where({ _id: id }).updateMany({
-            isAdmin: true,
-        });
+        doctor = await Doctor.findByIdAndUpdate(
+            id,
+            {
+                $set: { isAdmin: true },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            query,
+            doctor,
         });
     }),
 
@@ -184,13 +193,41 @@ module.exports = {
                 .status(400)
                 .send({ success: false, message: "Invalid doctor Id" });
 
-        const query = await Doctor.where({ _id: id }).updateMany({
-            isAdmin: false,
-        });
+        doctor = await Doctor.findByIdAndUpdate(
+            id,
+            {
+                $set: { isAdmin: false },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            query,
+            doctor,
+        });
+    }),
+
+    getAssignedPatientsController: catchAsync(async (req, res) => {
+        let { id } = req.params;
+        let doctor = await Doctor.findById(id);
+
+        if (!doctor)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid doctor Id" });
+
+        let patients = await Patient.find({
+            doctors: { $in: [id] },
+        });
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            patients,
         });
     }),
 };
