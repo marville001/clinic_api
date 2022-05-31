@@ -26,4 +26,10 @@ module.exports = {
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
     }),
+
+    updatePasswordSchema: Joi.object().keys({
+        old_password: Joi.string().min(8).required(),
+        new_password: Joi.string().min(8).required(),
+        email: Joi.string().email().required(),
+    }),
 };

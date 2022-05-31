@@ -86,34 +86,21 @@ module.exports = {
                 .status(400)
                 .send({ success: false, message: "Invalid doctor Id" });
 
-        let {
-            firstname,
-            lastname,
-            email,
-            username,
-            gender,
-            department,
-            phone,
-            dob,
-            bio,
-            address,
-        } = req.body;
-        const query = await Doctor.where({ _id: id }).updateMany({
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            username: username,
-            gender: gender,
-            department: department,
-            phone: phone,
-            dob: dob,
-            bio: bio,
-            address,
-        });
+        doctor = await Doctor.findByIdAndUpdate(
+            id,
+            {
+                $set: req.body,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
         res.status(200).json({
             success: true,
             message: `Successfull.`,
-            query,
+            doctor,
         });
     }),
 

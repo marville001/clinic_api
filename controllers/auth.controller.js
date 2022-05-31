@@ -32,7 +32,7 @@ module.exports = {
             token,
         });
     }),
-    
+
     loginController: catchAsync(async (req, res) => {
         const { email_username, password } = req.body;
         // Check if user email or username exists
@@ -122,20 +122,16 @@ module.exports = {
 
     resetPasswordController: catchAsync(async (req, res) => {
         if (!req.body.password)
-            return res
-                .status(400)
-                .send({
-                    success: false,
-                    message: "Please provide req.body.password",
-                });
+            return res.status(400).send({
+                success: false,
+                message: "Please provide req.body.password",
+            });
 
         if (req.body.password.length < 8)
-            return res
-                .status(400)
-                .send({
-                    success: false,
-                    message: "Password should be more than 8 characters",
-                });
+            return res.status(400).send({
+                success: false,
+                message: "Password should be more than 8 characters",
+            });
 
         // 1 Find the  user based on Token
         const hashedToken = crypto
@@ -164,6 +160,31 @@ module.exports = {
 
         await user.save();
 
+        res.status(200).json({
+            success: true,
+            message: "Password Reset Successfully. ",
+        });
+    }),
+
+    updatePasswordController: catchAsync(async (req, res) => {
+        const { email, old_password, new_password } = req.body;
+        // Check if user email or username exists
+        let user = await Login.findOne({ email }).select("+password");
+        if (!user)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid email" });
+
+        let valid = await bcrypt.compare(old_password, user.password);
+        if (!valid)
+            return res.status(400).send({
+                success: false,
+                message: "Wrong password. ",
+            });
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(new_password, salt);
+        await user.save();
         res.status(200).json({
             success: true,
             message: "Password Reset Successfully. ",
