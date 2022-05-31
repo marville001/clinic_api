@@ -167,6 +167,7 @@ module.exports = {
                 results: [],
             });
 
+        // Pattern
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
         const searchRgx = rgx(search);
 
