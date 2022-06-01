@@ -54,8 +54,6 @@ module.exports = {
 
         const { role } = user;
         let userDetails;
-        console.log(user);
-
         if (user.role === "admin") {
             userDetails = await Admin.findOne({email: user.email});
         } else if (user.role === "doctor") {
@@ -63,7 +61,6 @@ module.exports = {
         } else if (user.role === "secretary") {
             userDetails = await Secretary.findOne({email: user.email});
         } else {
-            console.log("Not...........");
             userDetails: null;
         }
 
