@@ -51,22 +51,19 @@ module.exports = {
                 message: "Invalid email or password...",
             });
 
+
         const { role } = user;
         let userDetails;
+        console.log(user);
 
-        if (role === "admin") {
-            userDetails = await Admin.findOne({
-                $or: [{ email: email_username }, { username: email_username }],
-            });
-        } else if (role === "doctor") {
-            userDetails = await Doctor.findOne({
-                $or: [{ email: email_username }, { username: email_username }],
-            });
-        } else if (role === "secretary") {
-            userDetails = await Secretary.findOne({
-                $or: [{ email: email_username }, { username: email_username }],
-            });
+        if (user.role === "admin") {
+            userDetails = await Admin.findOne({email: user.email});
+        } else if (user.role === "doctor") {
+            userDetails = await Doctor.findOne({email: user.email});
+        } else if (user.role === "secretary") {
+            userDetails = await Secretary.findOne({email: user.email});
         } else {
+            console.log("Not...........");
             userDetails: null;
         }
 
