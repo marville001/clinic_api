@@ -4,7 +4,7 @@ const signToken = require("../utils/signToken");
 const Admin = require("../models/admin.model");
 const Doctor = require("../models/doctor.model");
 const Secretary = require("../models/secretary.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 
@@ -51,15 +51,14 @@ module.exports = {
                 message: "Invalid email or password...",
             });
 
-
         const { role } = user;
         let userDetails;
         if (user.role === "admin") {
-            userDetails = await Admin.findOne({email: user.email});
+            userDetails = await Admin.findOne({ email: user.email });
         } else if (user.role === "doctor") {
-            userDetails = await Doctor.findOne({email: user.email});
+            userDetails = await Doctor.findOne({ email: user.email });
         } else if (user.role === "secretary") {
-            userDetails = await Secretary.findOne({email: user.email});
+            userDetails = await Secretary.findOne({ email: user.email });
         } else {
             userDetails: null;
         }
@@ -81,9 +80,10 @@ module.exports = {
                 .status(400)
                 .send({ success: false, message: "Please provide your email" });
 
-        let user = await Login.findOne({
-            $or: [{ email: email }, { username: email }],
-        });
+        let user = await Login.findOne({ email });
+
+        console.log(user, email);
+
         if (!user)
             return res
                 .status(400)

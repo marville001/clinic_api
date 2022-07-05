@@ -1,6 +1,6 @@
 const Login = require("../models/login.model");
 const catchAsync = require("../utils/catchAsync");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const _ = require("lodash");
 const Secretary = require("../models/secretary.model");
 

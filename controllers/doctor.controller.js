@@ -2,7 +2,7 @@ const Doctor = require("../models/doctor.model");
 const catchAsync = require("../utils/catchAsync");
 const Login = require("../models/login.model");
 const Patient = require("../models/patient.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = {
     addDoctorController: catchAsync(async (req, res) => {
