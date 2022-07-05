@@ -70,6 +70,11 @@ const patientSchema = new mongoose.Schema({
         ref: "Contact",
         default: [],
     },
+    avatar: {
+        type: String,
+        default:
+            "https://www.kindpng.com/picc/m/207-2074624_white-gray-circle-avatar-png-transparent-png.png",
+    },
     createdAt: {
         type: String,
         default: Date.now(),
