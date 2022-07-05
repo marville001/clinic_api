@@ -44,6 +44,6 @@ module.exports = {
         user.avatar = imageLink;
         await user.save();
 
-        return imageLink;
+        res.send({ url: imageLink });
     }),
 };
