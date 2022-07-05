@@ -513,7 +513,7 @@ module.exports = {
         ).populate("doctors");
 
         savedComment = await Comment.findById(comment._id).populate(
-            "commenttype"
+            "commenttype senderId"
         );
 
         Promise.all(
@@ -545,7 +545,7 @@ module.exports = {
         res.status(200).json({
             success: true,
             message: `Comment Added Successfull.`,
-            comment,
+            comment: savedComment,
         });        
     }),
 
