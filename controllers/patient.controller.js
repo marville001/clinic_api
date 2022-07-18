@@ -205,7 +205,7 @@ module.exports = {
             return res
                 .status(400)
                 .send({ success: false, message: "Invalid Patient Id" });
-        
+
         let contact = await Contact.findById(cid);
 
         if (!contact)
@@ -248,15 +248,6 @@ module.exports = {
             success: true,
             message: `Deleted Successfull.`,
         });
-    }),
-
-    addPatietFileController: catchAsync(async (req, res) => {
-        const { id } = req.params;
-        let patient = await Patient.findById(id);
-        if (!patient)
-            return res
-                .status(404)
-                .send({ success: false, message: "Patient not found" });
     }),
 
     createContactController: catchAsync(async (req, res) => {
@@ -331,6 +322,47 @@ module.exports = {
             success: true,
             message: `File Added Successfull.`,
             file: savedFile,
+        });
+    }),
+
+    deletePatietFileController: catchAsync(async (req, res) => {
+        const { pid, fid } = req.params;
+        let patient = await Patient.findById(pid);
+
+        if (!patient)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid Patient Id" });
+
+        let file = await File.findById(fid);
+
+        if (!file)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid File Id" });
+
+        await File.findByIdAndDelete(fid);
+
+        const newFiles = patient.files?.filter(
+            (id) => id !== mongoose.Types.ObjectId(fid)
+        );
+        console.log({ newFiles, files: patient.files });
+
+        patient = await Patient.findByIdAndUpdate(
+            pid,
+            {
+                $set: { files: newFiles },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        ).populate("diagnosis contact files doctors");
+
+        res.status(200).json({
+            success: true,
+            message: `Deleted Successfull.`,
+            patient: patient,
         });
     }),
 

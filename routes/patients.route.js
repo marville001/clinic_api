@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController, deleteContactTypeController, addPatietFileController, assignPatientController, unAssignPatientController, createCommentTypeController, getCommentTypesController, deleteCommentTypeController, updateCommentTypeController, createCommentController, getCommentsController, updateCommentController, deleteCommentController, deleteContactController, updateContactController } = require("../controllers/patient.controller");
+const { getPatientsController, getPatientController, createPatientController, updatePatientController, deletePatientController, createContactTypeController, getContactTypesController, createContactController, deleteContactTypeController, addPatietFileController, assignPatientController, unAssignPatientController, createCommentTypeController, getCommentTypesController, deleteCommentTypeController, updateCommentTypeController, createCommentController, getCommentsController, updateCommentController, deleteCommentController, deleteContactController, updateContactController, deletePatietFileController } = require("../controllers/patient.controller");
 const auth = require("../middlewares/auth");
 const schemaValidator = require("../middlewares/schemaValidator");
 const { createCommentTypeSchema, updateCommentTypeSchema } = require("../shema-validators/comment-type.validators");
@@ -35,6 +35,7 @@ router.delete("/contact/:id", auth, deleteContactController);
 
 //Files
 router.post("/files/:id", auth, schemaValidator(addFileSchema, "body"), addPatietFileController);
+router.delete("/files/:pid/:fid", auth, deletePatietFileController);
 
 //Assign doctor
 router.put("/assign-doctor/:pid/:did", auth, assignPatientController);
