@@ -36,11 +36,6 @@ const patientSchema = new mongoose.Schema({
         required: true,
         enum: ["male", "female", "other"],
     },
-    department: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Department",
-        required: true,
-    },
     address: {
         type: String,
         required: true,
