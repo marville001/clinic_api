@@ -23,5 +23,6 @@ module.exports = {
         phone: Joi.string().allow(""),
         address: Joi.string().allow(""),
         password: Joi.string().min(8).allow(""),
+        status: Joi.string().allow(""),
     }),
 };

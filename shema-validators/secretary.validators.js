@@ -23,5 +23,6 @@ module.exports = {
         username: Joi.string().min(5).max(20).allow(""),
         email: Joi.string().email().allow(""),
         password: Joi.string().min(8).allow(""),
+        status: Joi.string().allow(""),
     }),
 };

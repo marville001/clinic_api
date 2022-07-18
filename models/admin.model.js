@@ -55,6 +55,11 @@ const adminSchema = new mongoose.Schema({
         type: String,
         default: Date.now(),
     },
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active",
+    },
 });
 
 const Admin = mongoose.model("Admin", adminSchema);
