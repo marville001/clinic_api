@@ -197,6 +197,44 @@ module.exports = {
         });
     }),
 
+    updateContactController: catchAsync(async (req, res) => {
+        const { pid, cid } = req.params;
+        let patient = await Patient.findById(pid);
+
+        if (!patient)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid Patient Id" });
+        
+        let contact = await Contact.findById(cid);
+
+        if (!contact)
+            return res
+                .status(400)
+                .send({ success: false, message: "Invalid Contact Id" });
+
+        contact = await Contact.findByIdAndUpdate(
+            cid,
+            {
+                $set: req.body,
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        patient = await Patient.findById(pid).populate(
+            "diagnosis contact files doctors"
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            patient,
+        });
+    }),
+
     deleteContactController: catchAsync(async (req, res) => {
         const { id } = req.params;
         const contact = await Contact.findById(id);
