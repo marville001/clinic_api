@@ -39,10 +39,11 @@ module.exports = {
 
     getPatientsController: catchAsync(async (req, res) => {
         const search = req.query.search || "";
+        const type = req.query.type || "";
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
         const searchRgx = rgx(search);
 
-        const patients = await Patient.find({
+        const condition = {
             $or: [
                 {
                     firstname: { $regex: searchRgx, $options: "i" },
@@ -54,7 +55,14 @@ module.exports = {
                     email: { $regex: searchRgx, $options: "i" },
                 },
             ],
-        }).sort([["createdAt", -1]]);
+        };
+
+        if (type !== "") {
+            condition["$and"] = [{ type }];
+        }
+        const patients = await Patient.find(condition).sort([
+            ["createdAt", -1],
+        ]);
 
         res.status(200).json({
             success: true,
@@ -521,7 +529,8 @@ module.exports = {
                 if (
                     savedComment?.commenttype?.viewBy === "everyone" ||
                     savedComment?.commenttype?.viewBy === "doctors" ||
-                    (savedComment?.commenttype?.viewBy === "admins" && doc.isAdmin)
+                    (savedComment?.commenttype?.viewBy === "admins" &&
+                        doc.isAdmin)
                 ) {
                     // Send email to doctor
                     sendEmail({
@@ -532,8 +541,12 @@ module.exports = {
                         <h2>Hello <strong> ${doc.firstname}</strong></h2>
                         </br>
                         <p>
-                            New Comment on Patient - <b>${ patient.firstname + " " + patient.lastname}</b>.
-                            Type <strong>${savedComment?.commenttype.name}</strong> - 
+                            New Comment on Patient - <b>${
+                                patient.firstname + " " + patient.lastname
+                            }</b>.
+                            Type <strong>${
+                                savedComment?.commenttype.name
+                            }</strong> - 
                             <i>${savedComment.comment}</i>
                         </p>
                         `,
@@ -546,7 +559,7 @@ module.exports = {
             success: true,
             message: `Comment Added Successfull.`,
             comment: savedComment,
-        });        
+        });
     }),
 
     getCommentsController: catchAsync(async (req, res) => {
