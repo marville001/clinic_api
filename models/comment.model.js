@@ -24,6 +24,10 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    senderName: {
+        type: String,
+        default: "",
+    },
 
     comment: {
         type: String,
