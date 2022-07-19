@@ -67,9 +67,6 @@ module.exports = {
                 doctorId: { $in: docArray },
             };
         }
-
-        console.log(docArray);
-
         const appointments = await Appointment.find(where).sort([
             ["createdAt", -1],
         ]);
