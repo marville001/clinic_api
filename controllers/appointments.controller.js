@@ -48,6 +48,39 @@ module.exports = {
         });
     }),
 
+    getAllAppointmentsController: catchAsync(async (req, res) => {
+        const { doctors } = req.query;
+
+        let docArray = [];
+
+        if (typeof doctors === "object") {
+            docArray = [...doctors];
+        }
+        if (typeof doctors === "string") {
+            docArray = [doctors];
+        }
+
+        let where = {};
+
+        if (docArray.length > 0) {
+            where = {
+                doctorId: { $in: docArray },
+            };
+        }
+
+        console.log(docArray);
+
+        const appointments = await Appointment.find(where).sort([
+            ["createdAt", -1],
+        ]);
+
+        res.status(200).json({
+            success: true,
+            message: `Successfull.`,
+            appointments,
+        });
+    }),
+
     getLatestAppointmentsController: catchAsync(async (req, res) => {
         const appointments = await Appointment.find({}, {}, { limit: 6 }).sort([
             ["createdAt", -1],
@@ -93,12 +126,10 @@ module.exports = {
         const appointment = await Appointment.findById(id);
 
         if (!appointment)
-            return res
-                .status(404)
-                .send({
-                    success: false,
-                    message: "Appointment does not exist",
-                });
+            return res.status(404).send({
+                success: false,
+                message: "Appointment does not exist",
+            });
 
         await Appointment.findByIdAndDelete(id);
 
@@ -118,7 +149,6 @@ module.exports = {
                 `,
             });
         }
-        
 
         res.status(200).json({
             success: true,
